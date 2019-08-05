@@ -1,6 +1,6 @@
 # Prometheus Exporter
   
-:warning This project is work in progress. However: Feedback, ideas, requirements are very welcome and of course of any kind of contribution.  
+:warning: This project is work in progress. However: Feedback, ideas, requirements are very welcome and of course of any kind of contribution.  
 
 This project allows you to export API-Management metrics as OpenMetrics for Prometheus and make them consumable for instance in Grafana dashboards.   
 For that purpose it acts like a proxy between the API-Manager hosts, consumes & parses generated Metrics and exposes them on an HTTP-Endpoint as in this [example](https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/misc/documentation/exposed-metrics-sample.txt).   
