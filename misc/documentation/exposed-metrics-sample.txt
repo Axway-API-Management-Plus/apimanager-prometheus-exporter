@@ -1,0 +1,168 @@
+# HELP gateway_system_memory System memory used (in KB)
+# TYPE gateway_system_memory gauge
+gateway_system_memory 1.1630932E7
+# HELP api_request_duration_seconds End to End processing time for an API-Call
+# TYPE api_request_duration_seconds histogram
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.005",} 0.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.01",} 11.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.025",} 37.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.05",} 37.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.075",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.1",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.25",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.5",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="0.75",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="1.0",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="2.5",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="5.0",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="7.5",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="10.0",} 38.0 1565003293205
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",le="+Inf",} 38.0 1565003293205
+api_request_duration_seconds_count{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",} 38.0 1565003293205
+api_request_duration_seconds_sum{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",} 0.5030000000000002 1565003293205
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.005",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.01",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.025",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.05",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.075",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.1",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.25",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.5",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.75",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="1.0",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="2.5",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="5.0",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="7.5",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="10.0",} 1.0 1564996283381
+api_request_duration_seconds_bucket{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",le="+Inf",} 1.0 1564996283381
+api_request_duration_seconds_count{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",} 1.0 1564996283381
+api_request_duration_seconds_sum{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",} 0.002 1564996283381
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.005",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.01",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.025",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.05",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.075",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.1",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.25",} 0.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.5",} 67.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="0.75",} 69.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="1.0",} 70.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="2.5",} 70.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="5.0",} 70.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="7.5",} 70.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="10.0",} 70.0 1565003484193
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",le="+Inf",} 70.0 1565003484193
+api_request_duration_seconds_count{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",} 70.0 1565003484193
+api_request_duration_seconds_sum{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",} 28.913000000000007 1565003484193
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.005",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.01",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.025",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.05",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.075",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.1",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.25",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.5",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="0.75",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="1.0",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="2.5",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="5.0",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="7.5",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="10.0",} 1.0 1564996287454
+api_request_duration_seconds_bucket{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",le="+Inf",} 1.0 1564996287454
+api_request_duration_seconds_count{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",} 1.0 1564996287454
+api_request_duration_seconds_sum{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",} 0.001 1564996287454
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.005",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.01",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.025",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.05",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.075",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.1",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.25",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.5",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="0.75",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="1.0",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="2.5",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="5.0",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="7.5",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="10.0",} 6.0 1565003477168
+api_request_duration_seconds_bucket{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",le="+Inf",} 6.0 1565003477168
+api_request_duration_seconds_count{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",} 6.0 1565003477168
+api_request_duration_seconds_sum{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",} 0.009000000000000001 1565003477168
+# HELP api_downstream_server_response_time Processing time
+# TYPE api_downstream_server_response_time histogram
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.005",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.01",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.025",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.05",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.075",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.1",} 0.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.25",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.5",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="0.75",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="1.0",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="2.5",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="5.0",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="7.5",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="10.0",} 70.0 1565003484193
+api_downstream_server_response_time_bucket{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",le="+Inf",} 70.0 1565003484193
+api_downstream_server_response_time_count{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",} 70.0 1565003484193
+api_downstream_server_response_time_sum{remoteName="petstore.swagger.io",remoteAddr="23.22.16.221",remotePort="80",} 8.830000000000002 1565003484193
+# HELP api_manager_info The detected API-Manager version
+# TYPE api_manager_info gauge
+api_manager_info{version="v7.7.0-Internal",hostname="api-env",groupId="group-2",groupName="QuickStart Group",serviceId="instance-1",serviceName="QuickStart Server",} 0.0
+# HELP api_requests_total The total number of API-Requests
+# TYPE api_requests_total counter
+api_requests_total{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="429",app="Test",} 38.0 1565003293205
+api_requests_total{service="Unknown API",path="/petsore/v2/pet/findByStatus",code="404",app="Unknown Application",} 1.0 1564996283381
+api_requests_total{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="200",app="Test",} 70.0 1565003484193
+api_requests_total{service="Unknown API",path="/petore/v2/pet/findByStatus",code="404",app="Unknown Application",} 1.0 1564996287454
+api_requests_total{service="Petstore HTTP",path="/petstore/v2/pet/findByStatus",code="401",app="Unknown Application",} 6.0 1565003477168
+# HELP api_registry_info The detected API-Manager version
+# TYPE api_registry_info gauge
+api_registry_info{path="/api/erm/admission",name="EMR-System-Admissions",version="3.7",} 0.0
+api_registry_info{path="/observation",name="FHIR Observation",version="DSTU2",} 0.0
+api_registry_info{path="/stockquote",name="Stockquote",version="1.0",} 0.0
+api_registry_info{path="/api/v1",name="B2Bi",version="1.1.0",} 0.0
+api_registry_info{path="/location",name="FHIR Location",version="DSTU2",} 0.0
+api_registry_info{path="/procedure",name="FHIR Procedure",version="DSTU2",} 0.0
+api_registry_info{path="/practitioner",name="FHIR Practitioner",version="DSTU2",} 0.0
+api_registry_info{path="/rollback-api-301",name="Rollback-API-301",version="2.0.0",} 0.0
+api_registry_info{path="/condition",name="FHIR Condition",version="DSTU2",} 0.0
+api_registry_info{path="/organization",name="FHIR Organization",version="DSTU2",} 0.0
+api_registry_info{path="/api/hl7/message",name="HL7-Message-Maker",version="2.1",} 0.0
+api_registry_info{path="/api/sec/auth/patient",name="Security-PatientAuth-Service",version="2.2",} 0.0
+api_registry_info{path="Unknown",name="Unknown API",version="N/A",} 0.0
+api_registry_info{path="/apiv1/oms",name="oms1.1.json",version="1.1",} 0.0
+api_registry_info{path="/api/hl7/db",name="HL7-Element-DB",version="2.1",} 0.0
+api_registry_info{path="/fhir",name="FHIR Resource (Any)",version="DSTU2",} 0.0
+api_registry_info{path="/encounter",name="FHIR Encounter",version="DSTU2",} 0.0
+api_registry_info{path="/api/hl7/module/verif",name="HL7-Interface-Module",version="2.1",} 0.0
+api_registry_info{path="/appointment",name="FHIR Appointment",version="DSTU2",} 0.0
+api_registry_info{path="/careplan",name="FHIR CarePlan",version="DSTU2",} 0.0
+api_registry_info{path="/api/v1/rules",name="ManuallyImported",version="N/A",} 0.0
+api_registry_info{path="/api/ins/check",name="INS-InsuranceCheck",version="1.3",} 0.0
+api_registry_info{path="/api/hipaa/control",name="Security-HIPAA-Control",version="1.0",} 0.0
+api_registry_info{path="/api/emr/physicians",name="EMR-System-Physicians",version="3.7",} 0.0
+api_registry_info{path="/api/emr/surgery",name="EMR-System-Surgery",version="3.7",} 0.0
+api_registry_info{path="/petstore/v2",name="Petstore HTTP",version="1.0.0",} 0.0
+api_registry_info{path="/device",name="FHIR Device",version="DSTU2",} 0.0
+api_registry_info{path="/sample/minimal/api/v1",name="Sample Minimal API",version="1.0.0",} 0.0
+api_registry_info{path="/patient",name="FHIR Patient",version="DSTU2",} 0.0
+api_registry_info{path="/api/emr/patient",name="EMR-System-Patient",version="3.7",} 0.0
+api_registry_info{path="/api/emr/diagnostic",name="EMR-DiagnosticInfo",version="3.7",} 0.0
+api_registry_info{path="/api/emr/catalog",name="EMR-HealthCatalog",version="3.7",} 0.0
+# HELP gateway_system_cpu Percentage of the global CPU usage on the system
+# TYPE gateway_system_cpu gauge
+gateway_system_cpu 7.0
+# HELP gateway_instance_cpu Percentage of current process CPU usage (total usage divided by the number of cores)
+# TYPE gateway_instance_cpu gauge
+gateway_instance_cpu 2.0
+# HELP gateway_system_memory_total System total memory size (in KB).
+# TYPE gateway_system_memory_total gauge
+gateway_system_memory_total 1.64319E7
+# HELP gateway_instance_disk_used Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR)
+# TYPE gateway_instance_disk_used gauge
+gateway_instance_disk_used 73.0
+# HELP gateway_instance_memory Memory used by the API-Gateway instance JVM (in KB)
+# TYPE gateway_instance_memory gauge
+gateway_instance_memory 1759348.0
