@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>apimanager_exporter</artifactId>
+	<groupId>com.github.axway-api-management-plus.apimanager_exporter</groupId>
+	<packaging>jar</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Axway API-Manager Exporter</name>
+	<description>Prometheus compatible OpenMetrics exporter</description>
+	<url>https://github.com/Axway-API-Management-Plus/apimanager_exporter</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<project.scm.id>github</project.scm.id>
+	</properties>
+
+	<scm>
+		<connection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager_exporter.git</connection>
+		<developerConnection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager_exporter.git</developerConnection>
+		<url>https://github.com/Axway-API-Management-Plus/apimanager_exporter</url>
+		<tag>@${project.version}</tag>
+	</scm>
+
+	<dependencies>
+		<dependency>
+			<artifactId>axway-swagger-promote-core</artifactId>
+			<groupId>com.github.axway-api-management-plus.swagger-promote</groupId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_common</artifactId>
+			<version>0.6.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_httpserver</artifactId>
+			<version>0.6.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-yaml</artifactId>
+			<version>2.9.9</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-lumberjack -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-lumberjack</artifactId>
+			<version>3.0.0-M4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+			<version>3.0.0-M4</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<id>distribution</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>apimanager-report-tool-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+			</plugin>
+		</plugins>
+	</build>
+</project>

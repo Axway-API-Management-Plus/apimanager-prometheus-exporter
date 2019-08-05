@@ -1,0 +1,25 @@
+host: localhost:7199
+ssl: False
+listenAddress: 0.0.0.0
+listenPort: 8080
+blacklist:
+   # To configure black lists use the following format
+   # <port>:<method>:<path>
+   # Example:
+   # .*:OPTIONS:.* to ignore all OPTION calls on all ports
+   # Ignore all OPTIONS requests
+   - .*:OPTIONS:.*
+   # Ignore requests on port 8080
+   - 8080:.*:.*
+   # Ignore API-Manager REST-API calls
+   - 8075:.*:.*
+   # Don't care favico requests
+   - .*:.*:/favicon.ico
+# The API-Manager connection is used to query additional Meta-Data information 
+# from the API-Regsitry using the API-Manager REST-API 
+apimanager:
+   hostname: api-env
+   port: 8075
+   username: apiadmin
+   password: changeme
+   
