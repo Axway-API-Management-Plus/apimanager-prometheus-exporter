@@ -5,11 +5,14 @@ purpose it acts like a proxy between the API-Manager hosts, consumes & parses ge
 In Prometheus each exporter is configured as a target, automatically scraped and exposed metrics are stored into the Prometheush time-series-database. 
 
 This illustration provides a basic overview about the workflow:  
+![APIManager-Prometheus Exporter overview]( https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-overview.png )
 
 The Prometheus-Exporter is driven based on the generated Metrics-Information (/events), which will be streamed by Filebeat to the 
 exporter. The received messages are parsed, potentially blacklisted and and exposed as OpenMetrics.  
 
 Based on the collected data Dashboard like this example can be created:
+![Grafana Dashboard]( https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-sample-grafana-dashboard.png )
+
 
 
 ## Install
