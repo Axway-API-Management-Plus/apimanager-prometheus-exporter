@@ -1,16 +1,49 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--
+~ Copyright 2006-2019 the original author or authors.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~     http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>apimanager_exporter</artifactId>
-	<groupId>com.github.axway-api-management-plus.apimanager_exporter</groupId>
-	<packaging>jar</packaging>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Axway API-Manager Exporter</name>
-	<description>Prometheus compatible OpenMetrics exporter</description>
-	<url>https://github.com/Axway-API-Management-Plus/apimanager_exporter</url>
+	<groupId>com.github.axway-api-management-plus.apimanager-prometheus-exporter</groupId>
+	<artifactId>parent</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
+
+	<name>Prometheus Exporter Parent</name>
+	<description>Provides Prometheus OpenMetrics for running API-Manager instances</description>
+	<url>https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter</url>
+
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Chris Wiechmann</name>
+			<email>cwiechmann@axway.com</email>
+			<organization>Axway</organization>
+			<organizationUrl>http://www.axway.com</organizationUrl>
+		</developer>
+	</developers>
 
 	<properties>
+		<revision>0.1.0-SNAPSHOT</revision>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -18,85 +51,106 @@
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager_exporter.git</connection>
-		<developerConnection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager_exporter.git</developerConnection>
-		<url>https://github.com/Axway-API-Management-Plus/apimanager_exporter</url>
+		<connection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter.git</connection>
+		<developerConnection>scm:git:https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter.git</developerConnection>
+		<url>https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter</url>
 		<tag>@${project.version}</tag>
 	</scm>
 
-	<dependencies>
-		<dependency>
-			<artifactId>axway-swagger-promote-core</artifactId>
-			<groupId>com.github.axway-api-management-plus.swagger-promote</groupId>
-			<version>1.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient_common</artifactId>
-			<version>0.6.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>io.prometheus</groupId>
-			<artifactId>simpleclient_httpserver</artifactId>
-			<version>0.6.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-yaml</artifactId>
-			<version>2.9.9</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-lumberjack -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-lumberjack</artifactId>
-			<version>3.0.0-M4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-			<version>3.0.0-M4</version>
-		</dependency>
-	</dependencies>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.1</version>
-				<executions>
-					<execution>
-						<id>distribution</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
+	<modules>
+		<module>apimanager_exporter</module>
+		<module>simpleclient_timestamp_support</module>
+		<module>distribution</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-help-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>show-profiles</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>active-profiles</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6.7</version>
+						<extensions>true</extensions>
 						<configuration>
-							<finalName>apimanager-report-tool-${project.version}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/assembly.xml</descriptor>
-							</descriptors>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version>
-			</plugin>
-		</plugins>
-	</build>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.3</version>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
