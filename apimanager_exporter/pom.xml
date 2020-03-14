@@ -19,6 +19,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.2</version>
+		</dependency>
+		<dependency>
 			<artifactId>axway-swagger-promote-core</artifactId>
 			<groupId>com.github.axway-api-management-plus.swagger-promote</groupId>
 			<version>1.6.2</version>
