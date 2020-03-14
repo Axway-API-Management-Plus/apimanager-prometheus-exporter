@@ -2,6 +2,7 @@ package com.axway.apim.prometheus;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
@@ -17,12 +18,12 @@ import com.axway.apim.prometheus.model.SystemMessage;
 import com.axway.apim.prometheus.model.TransactionMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Slf4j
 public class MessageProcessor implements Processor {
-	static Logger LOG = LoggerFactory.getLogger(MessageProcessor.class);
 	
-	TransactionMetricHandler transactionHandler = null;
-	SystemMetricHandler systemHandler = null;
-	HeaderMetricHandler headerHandler = null;
+	private TransactionMetricHandler transactionHandler;
+	private SystemMetricHandler systemHandler;
+	private HeaderMetricHandler headerHandler;
 
 	public MessageProcessor() {
 		super();
@@ -36,7 +37,7 @@ public class MessageProcessor implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		Map<Object, Object> body = exchange.getIn().getBody(Map.class);
 		String receivedMessage = (String)body.get("message");
-		LOG.info("Received message: '"+receivedMessage+"'");
+		log.info("Received message: '{}'",receivedMessage);
 		Message msg = processMessage(receivedMessage);
 	}
 	
@@ -54,7 +55,7 @@ public class MessageProcessor implements Processor {
 			msg = mapper.readValue(message, HeaderMessage.class);
 			handler = headerHandler;
 		} else {
-			LOG.error("Unsupported message type: " + message);
+			log.error("Unsupported message type: {}" + message);
 			return null;
 		}
 		if(handler.isBlackListed(msg)) return msg;
