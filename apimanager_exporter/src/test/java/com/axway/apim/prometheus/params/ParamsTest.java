@@ -13,7 +13,7 @@ public class ParamsTest {
   public void checkDefaultParams() throws Exception {
 	  String configToTest = this.getClass().getResource("/config.yml").getFile();
 	  Config cfg = Config.getConfigFromFile(configToTest);
-	  APIManagerConfig mgrCfg = cfg.getAPIManager();
+	  APIManagerConfig mgrCfg = cfg.getApimanager();
 	  
 	  Assert.assertEquals(mgrCfg.getHostname(), "api-env");
 	  Assert.assertEquals(mgrCfg.getPort(), "8075");
