@@ -23,6 +23,18 @@ Based on the collected data Dashboard like this example can be created:
 The goal is to execute the exporter as a Docker-Container and Java-Application. It can be executed either directly on the API-Manager host or on dedicated machines.  
 For now, please clone the project and run the main Java-Class: `com.axway.apim.prometheus.ExporterMain` 
 
+
+### Using MakeFile
+
+A Makefile is provided and can be used in order to package, build docker image, run and stop the application.
+
+To build and run the project just run : 
+
+```
+make build
+make run
+```
+
 ## Changelog
 - 0.0.1 - 05.08.2019
   - initial version

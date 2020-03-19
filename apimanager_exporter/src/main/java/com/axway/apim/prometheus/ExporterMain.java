@@ -19,7 +19,7 @@ public class ExporterMain {
 		String configPath = args.length > 0 ? args[0] : Config.DEFAULT_PATH;
 		Config cfg = Config.getConfigFromFile(configPath);
 
-		APIManagerConfig mgrCfg = cfg.getAPIManager();
+		APIManagerConfig mgrCfg = cfg.getApimanager();
 		
 		new CommandParameters(mgrCfg.getParams());
 		
@@ -43,7 +43,7 @@ public class ExporterMain {
 
 		new HTTPServer(cfg.getListenAddress(), cfg.getListenPort());
 		LOG.info("API-Manager prometheus exporter successfully started. "
-				+ "Version: " + ExporterMain.class.getPackage().getImplementationVersion());
+				+ "Version: {}" , ExporterMain.class.getPackage().getImplementationVersion());
 
 		for (; ; ) {
 			try {

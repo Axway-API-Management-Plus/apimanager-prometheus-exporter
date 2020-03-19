@@ -13,7 +13,9 @@ import com.axway.apim.prometheus.model.TransactionMessage;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Histogram;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TransactionMetricHandler extends MetricHandler {
 	
 	private List<Pattern> blackLists = null;
@@ -42,7 +44,7 @@ public class TransactionMetricHandler extends MetricHandler {
 
 	@Override
 	public void process(Message msg) {
-		LOG.info("Processing transaction");
+		log.info("Processing transaction");
 		TransactionMessage transaction = (TransactionMessage)msg;
 		
 		totalAPIRequests.labels(
@@ -119,7 +121,7 @@ public class TransactionMetricHandler extends MetricHandler {
 		String checkString = transaction.getProtocolSrc()+":"+getMethod(transaction)+":"+transaction.getPath();
 		for(Pattern p : blackLists) {
 			if(p.matcher(checkString).matches()) {
-				LOG.debug("Transaction: '"+checkString+"' is blacklisted based on configred RegEx: '" + p.toString() + "'");
+				log.debug("Transaction: '{}' is blacklisted based on configred RegEx: '{}'",checkString,p.toString());
 				return true;
 			}
 		}
