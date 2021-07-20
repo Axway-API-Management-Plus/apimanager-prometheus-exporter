@@ -1,7 +1,7 @@
 # Prometheus Exporter
   
-:warning:  
-This project is work in progress.   
+:warning: This project is work in progress on a PoC/Prototype stage.  
+
 However: Feedback, ideas, requirements are very welcome and of course of any kind of contribution.  
 
 This project allows you to export API-Management metrics as OpenMetrics for Prometheus and make them consumable for instance in Grafana dashboards.   
