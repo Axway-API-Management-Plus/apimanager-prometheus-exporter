@@ -102,7 +102,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('next');
 		});
 
-		it.only('should gracefully handle if previous count is smaller than current value resulting in a negative increment', async () => {
+		it.skip('should gracefully handle if previous count is smaller than current value resulting in a negative increment', async () => {
 			// Initial data, has some bigger values now, than the second run
 			var initialTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/2_IncrementedServiceMetrics.json'), null);
 			// This leads to a negative increment
