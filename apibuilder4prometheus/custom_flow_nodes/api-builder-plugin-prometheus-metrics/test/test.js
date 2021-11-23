@@ -79,7 +79,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it.only('should collect all Service metrics into a prom-client registry', async () => {
+		it.skip('should collect all Service metrics into a prom-client registry', async () => {
 			// Initial data, which is used an an offset to calculate Diff-Increments
 			var initialTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/1_InitialServiceMetrics.json'), null);
 			await flowNode.processServiceMetrics({ serviceMetrics: initialTestMetrics });
