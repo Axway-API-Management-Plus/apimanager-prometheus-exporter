@@ -1,0 +1,9 @@
+apiVersion: v2
+name: axway-apim-prometheus
+description: Prometheus exporter for Axway API-Management
+
+type: application
+
+version: 0.1.0
+
+appVersion: "0.1.0"

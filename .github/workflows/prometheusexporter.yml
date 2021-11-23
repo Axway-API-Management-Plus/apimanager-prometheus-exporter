@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   test-prom-metrics-flow-node:
+    name: Test Prom-Metrics Flow-Node
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     env:
       workingDirectory: 'apibuilder4prometheus/custom_flow_nodes/api-builder-plugin-prometheus-metrics'
@@ -27,6 +28,7 @@ jobs:
         npm test
 
   apim-api-mgt-flow-node:
+    name: Test API-Mgt Flow-Node
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     env:
       workingDirectory: 'apibuilder4prometheus/custom_flow_nodes/api-builder-plugin-axway-api-management'
@@ -49,9 +51,36 @@ jobs:
         npm run build --if-present
         npm test
 
+  test-prom-metrics-api:
+    name: Test Prometheus-Metrics API
+    needs: [test-prom-metrics-flow-node, apim-api-mgt-flow-node]
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    env:
+      workingDirectory: 'apibuilder4prometheus'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Test Metrics API
+      working-directory: ${{env.workingDirectory}}
+      env:
+        ANM_URL: ${{ secrets.ANM_URL }}
+        ANM_USERNAME: ${{ secrets.ANM_USERNAME }}
+        ANM_PASSWORD: ${{ secrets.ANM_PASSWORD }}
+        LOG_LEVEL: DEBUG
+      run: | 
+        npm ci
+        npm run build --if-present
+        npm test
+
   push-latest-apibuilder4prometheus:
     name: Push latest APIBuilder4Prometheus
-    needs: [test-prom-metrics-flow-node, apim-api-mgt-flow-node]
+    needs: [test-prom-metrics-api]
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     env:
       workingDirectory: 'apibuilder4prometheus'

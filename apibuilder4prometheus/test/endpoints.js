@@ -18,36 +18,14 @@ describe('Endpoints', function () {
 	 */
 	after(() => stopApiBuilder(server));
 
-	describe('Greet', () => {
-		it('[Endpoint-0001] should be able to hit Greet endpoint', () => {
-			const auth = {
-				user: server.apibuilder.config.apikey || 'test',
-				password: ''
-			};
-			const username = 'Johnny Test';
+	describe('Prom-Metrics', () => {
+		it.only('[Endpoint-0001] should be able to hit Prom-Metrics endpoint', () => {
 			return requestAsync({
 				method: 'GET',
-				uri: `http://localhost:${server.apibuilder.port}/api/greet?username=${username}`,
-				auth: auth,
+				uri: `http://localhost:${server.apibuilder.port}/api/metrics`,
 				json: true
 			}).then(({ response, body }) => {
-				expect(response.statusCode).to.equal(200);
-				expect(body).to.equal(`Howdy ${username}`);
-			});
-		});
-
-		it('[Endpoint-0002] should be able to get error response from Greet endpoint', () => {
-			const auth = {
-				user: server.apibuilder.config.apikey || 'test',
-				password: ''
-			};
-			return requestAsync({
-				method: 'GET',
-				uri: `http://localhost:${server.apibuilder.port}/api/greet`,
-				auth: auth,
-				json: true
-			}).then(({ response }) => {
-				expect(response.statusCode).to.equal(400);
+				expect(response.statusCode).to.equal(200);;
 			});
 		});
 	});
