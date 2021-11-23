@@ -1,0 +1,7 @@
+# HELP registry1_metric A sample metric for registry 1
+# TYPE registry1_metric gauge
+registry1_metric 0
+
+# HELP registry2_metric A sample metric for registry 2
+# TYPE registry2_metric gauge
+registry2_metric 0

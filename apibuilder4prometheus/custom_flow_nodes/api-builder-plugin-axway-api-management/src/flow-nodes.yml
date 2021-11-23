@@ -1,0 +1,59 @@
+flow-nodes:
+  axway-api-management:
+    name: Axway API-Management Utils
+    icon: axway-logo.png
+    description: Flow providing utility functions related to the Axway-API-Management solution. As of today it can be used to lookup a user in API-Gateway Manager and API-Manager to get a union view.
+    category: Prometheus
+    methods:
+      lookupTopology:
+        name: Lookup topology
+        description: "Looks up the API-Gateway topology, which is required to know all API-Instances. Admin-Node-Manager services are ignored."
+        outputs:
+          next:
+            name: Next
+            description: The API-Gateway topology
+            context: $.gatewayTopology
+            schema:
+              type: object
+          error:
+            name: Error
+            description: An unexpected error happened
+            context: $.error
+            schema:
+              type: object
+
+      getMetrics:
+        name: Get metrics
+        description: "Gets all metrics based on the given Gateway-Topology"
+        parameters:
+          metricsType:
+            name: Metrics type
+            description: The type of metrics to collect
+            required: true
+            initialType: string
+            schema:
+              type: string
+              enum:
+                - SystemOverview
+                - Service
+                - Client
+                - TargetServer
+          topology:
+            name: Topology
+            description: The topology object, which is used to iterate over all API-Gateway instances.
+            required: true
+            schema:
+              type: object
+        outputs:
+          next:
+            name: Next
+            description: Metrics
+            context: $.metrics
+            schema:
+              type: array
+          error:
+            name: Error
+            description: An unexpected error happened
+            context: $.error
+            schema:
+              type: object

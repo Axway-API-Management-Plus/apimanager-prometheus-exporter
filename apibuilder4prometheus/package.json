@@ -1,0 +1,42 @@
+{
+	"name": "prometheus-exporter",
+	"description": "An API Builder service",
+	"main": "app.js",
+	"version": "1.0.0",
+	"license": "",
+	"keywords": [
+		"api-builder",
+		"micro-service",
+		"middleware",
+		"orm",
+		"service"
+	],
+	"engines": {
+		"node": ">=12.13"
+	},
+	"repository": {},
+	"private": true,
+	"dependencies": {
+		"@axway/api-builder-plugin-fn-base64": "^4.0.2",
+		"@axway/api-builder-plugin-fn-javascript": "^3.0.2",
+		"@axway/api-builder-plugin-fn-json": "^4.0.2",
+		"@axway/api-builder-plugin-fn-logger": "^1.0.1",
+		"@axway/api-builder-plugin-fn-mustache": "^1.0.10",
+		"@axway/api-builder-plugin-fn-restclient": "^2.0.24",
+		"@axway/api-builder-plugin-fn-swagger": "^3.0.0",
+		"@axway/api-builder-plugin-invoke-flow": "^1.1.1",
+		"@axway/api-builder-runtime": "^4.69.0",
+		"api-builder-plugin-axway-api-management": "file:custom_flow_nodes/api-builder-plugin-axway-api-management",
+		"api-builder-plugin-prometheus-metrics": "file:custom_flow_nodes/api-builder-plugin-prometheus-metrics"
+	},
+	"devDependencies": {
+		"@axway/api-builder-admin": "^1.44.13",
+		"chai": "^4.3.1",
+		"mocha": "^9.1.2",
+		"request": "^2.88.0"
+	},
+	"scripts": {
+		"start": "node .",
+		"test": "mocha --colors ./test --recursive -R spec"
+	}
+}

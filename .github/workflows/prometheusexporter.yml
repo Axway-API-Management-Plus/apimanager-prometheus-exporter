@@ -1,0 +1,69 @@
+name: Prometheus Exporter
+
+on: [push, pull_request]
+
+jobs:
+  test-prom-metrics-flow-node:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    env:
+      workingDirectory: 'apibuilder4prometheus/custom_flow_nodes/api-builder-plugin-prometheus-metrics'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Run npm ci, npm test
+      working-directory: ${{env.workingDirectory}}
+      env:
+        LOG_LEVEL: DEBUG
+        CI: true
+      run: | 
+        npm ci
+        npm run build --if-present
+        npm test
+
+  apim-api-mgt-flow-node:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    env:
+      workingDirectory: 'apibuilder4prometheus/custom_flow_nodes/api-builder-plugin-axway-api-management'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Run npm ci, npm test
+      working-directory: ${{env.workingDirectory}}
+      env:
+        LOG_LEVEL: DEBUG
+        CI: true
+      run: | 
+        npm ci
+        npm run build --if-present
+        npm test
+
+  push-latest-apibuilder4prometheus:
+    name: Push latest APIBuilder4Prometheus
+    needs: [test-prom-metrics-flow-node, apim-api-mgt-flow-node]
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    env:
+      workingDirectory: 'apibuilder4prometheus'
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Publish Docker image (latest)
+      uses: elgohr/Publish-Docker-Github-Action@2.13
+      with:
+        name: cwiechmann/apibuilder4prometheus
+        workdir: ${{env.workingDirectory}}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: "latest"

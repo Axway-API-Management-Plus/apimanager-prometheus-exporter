@@ -1,0 +1,88 @@
+flow-nodes:
+  prometheus-metrics:
+    name: Prometheus metrics
+    icon: prometheus_logo.svg
+    description: Flow node used to generate required Prometheus metrics
+    category: Prometheus
+    methods:
+      processSystemOverviewMetrics: 
+        name: Process System-Overview metrics
+        description: Processes the given SystemOverview metrics and updates the SystemOverview-Registry metrics.
+        parameters:
+          systemOverviewMetrics:
+            name: System overview metrics
+            description: System overview metrics collected from the ANM.
+            required: true
+            schema:
+              type: array
+        returns:
+          name: Next
+          description: The SystemOverview Metrics-Registry
+          context: $.systemOverviewMetricsRegistry
+          schema:
+            type: object
+        throws:
+          name: Error
+          description: An unexpected error was encountered.
+          context: $.error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+      processServiceMetrics: 
+        name: Process Service metrics
+        description: Processes the given Service metrics and updates the Service-Registry metrics.
+        parameters:
+          serviceMetrics:
+            name: Service metrics
+            description: Service metrics collected from the ANM.
+            required: true
+            schema:
+              type: array
+        returns:
+          name: Next
+          description: The SystemOverview Metrics-Registry
+          context: $.serviceMetricsRegistry
+          schema:
+            type: object
+        throws:
+          name: Error
+          description: An unexpected error was encountered.
+          context: $.error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+      mergeRegistries: 
+        name: Merge registries
+        description: Merges metrics into single registry and returns the Prometheus metrics endpoint
+        parameters:
+          returnMetrics:
+            name: Return metrics
+            description: If true, the flow returns the metrics as required by the Prometheus scraper.
+            required: false
+            initialType: boolean
+            schema:
+              default: false
+              type: boolean
+        returns:
+          name: Next
+          description: The SystemOverview Metrics-Registry
+          context: $.metrics
+          schema:
+            oneOf:
+              - type: string
+              - type: object
+        throws:
+          name: Error
+          description: An unexpected error was encountered.
+          context: $.error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
