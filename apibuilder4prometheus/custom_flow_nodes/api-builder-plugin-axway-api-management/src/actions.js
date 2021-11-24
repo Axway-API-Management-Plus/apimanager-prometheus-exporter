@@ -153,26 +153,26 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 			var diff = pointEnd - lastReadTimestamp;
 			if(diff > 600000) { // Difference is bigger than the max range of data 
 				// Reset it and only read the last data point
-				logger.error(`Group-Name: ${metrics.name} (${serieName}): Unexpected difference: ${diff} between last read timestamp and current data set.`);
+				logger.error(`Group-Name: ${metrics.name} (${serieName}/${metris.gatewayId}): Unexpected difference: ${diff} between last read timestamp and current data set.`);
 				metrics[serieName] = serie.data[serie.data.length - 1];
 				continue;
 			}
 			// Depending on the difference, we know how many data points to read
 			var points2Read = diff/pointInterval;
 			var value = 0;
-			logger.info(`Group-Name: ${metrics.name} (${serieName}): Reading last ${points2Read} data point for metric ${serieName}`);
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metris.gatewayId}): Reading last ${points2Read} data point for metric ${serieName}`);
 			var readDataPoints = [];
 			for(var i=1; i<=points2Read; i++) {
 				readDataPoints.push(serie.data[serie.data.length - i]);
 				value = value + serie.data[serie.data.length - i];
 			}
-			logger.info(`Group-Name: ${metrics.name} (${serieName}): Calculated ${value} based on last ${points2Read} datapoints: ${JSON.stringify(readDataPoints)}.`);
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metris.gatewayId}): Calculated ${value} based on last ${points2Read} datapoints: ${JSON.stringify(readDataPoints)}.`);
 			metrics[serieName] = value;
 		} else {
 			// If no data has been read previously, only read the last data bucket 
 			// to avoid spikes in the result.
 			// However, this requires, that data is constanly scraped by Prom as they set the timestamp
-			logger.info(`Group-Name: ${metrics.name} (${serieName}): Using last bucket value: ${serie.data[serie.data.length - 1]}`);
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metris.gatewayId}): Using last bucket value: ${serie.data[serie.data.length - 1]}`);
 			metrics[serieName] = serie.data[serie.data.length - 1];
 		}
 	}
