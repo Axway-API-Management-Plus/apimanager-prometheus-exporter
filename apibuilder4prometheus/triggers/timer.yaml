@@ -2,7 +2,7 @@ triggers:
   timer-1:
     name: Timer
     parameters:
-      interval: '30000'
+      interval: '15000'
     enabled: true
     invoke:
       flow: GetServiceMetrics
