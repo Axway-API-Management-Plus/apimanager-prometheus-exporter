@@ -109,7 +109,7 @@ describe('Tests', () => {
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
 			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
 			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
-			var testGroups = { "instance-1": instance1Groups, "instance-2": instance2Groups }
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
 			// Initially only the last data point is expected for all series as the cache is not yet populated
 			const { value, output } = await flowNode.getTimelineMetrics({ topology: testTopology, metricsGroups: testGroups, metricsType: 'Service' });
 			
@@ -122,7 +122,7 @@ describe('Tests', () => {
 			expect(value[1].failures).to.equal(4);
 		});
 
-		it.only('should result into service metrics based on the timeline metrics', async () => {
+		it('should result into service metrics based on the timeline metrics', async () => {
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
 				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/1_ServiceTimeLine.json');
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Petstore${serviceMetricTypes}`)
@@ -141,8 +141,8 @@ describe('Tests', () => {
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
 			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
 			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
-			var testGroups = { "instance-1": instance1Groups, "instance-2": instance2Groups }
-			// Initially only the last data point is expected for all series as the cache is not yet populated
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
+			
 			const { value, output } = await flowNode.getTimelineMetrics({ topology: testTopology, metricsGroups: testGroups, metricsType: 'Service' });
 			
 			// We expect a simple array of metrics for each API-Gateway-Instance, Service and (later Method)
@@ -166,7 +166,7 @@ describe('Tests', () => {
 			expect(value[2].processingTimeAvg).to.not.equal(null);
 			expect(value[2]).to.have.property('numMessages');
 			expect(value[2].numMessages).to.not.equal(null);
-			console.log(JSON.stringify(value));
+			//console.log(JSON.stringify(value));
 		});
 	});
 });

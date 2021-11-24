@@ -85,7 +85,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it.only('should update the service registry based on the given service metrics', async () => {
+		it('should update the service registry based on the given service metrics', async () => {
 			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/1_ServiceMetrics.json'), null);
 			const { value, output } = await flowNode.processServiceMetrics({ serviceMetrics: testMetrics });
 
