@@ -22,9 +22,33 @@ flow-nodes:
             schema:
               type: object
 
-      getMetrics:
-        name: Get metrics
-        description: "Gets all metrics based on the given Gateway-Topology"
+      getMetricsGroups:
+        name: Get metrics groups
+        description: "Gets all monitored metrics groups from the ANM for all API-Gateway instances. Important to know, API-Gateway instances are creating groups locally."
+        parameters:
+          topology:
+            name: Topology
+            description: The topology object, which is used to iterate over all API-Gateway instances.
+            required: true
+            schema:
+              type: object
+        outputs:
+          next:
+            name: Next
+            description: Metrics Groups
+            context: $.metricsGroups
+            schema:
+              type: object
+          error:
+            name: Error
+            description: An unexpected error happened
+            context: $.error
+            schema:
+              type: object
+
+      getTimelineMetrics:
+        name: Get timeline metrics
+        description: "Gets timeline metrics from ANM and returns the generated metrics object"
         parameters:
           metricsType:
             name: Metrics type
@@ -38,6 +62,12 @@ flow-nodes:
                 - Service
                 - Client
                 - TargetServer
+          metricsGroups:
+            name: Metrics groups
+            description: The collected Metrics-Groups for all API-Gateways
+            required: true
+            schema:
+              type: object
           topology:
             name: Topology
             description: The topology object, which is used to iterate over all API-Gateway instances.

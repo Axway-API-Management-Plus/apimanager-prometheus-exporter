@@ -1,0 +1,33 @@
+{
+    "result": [
+        {
+            "groupType": "SystemOverview",
+            "cpuUsed": 0,
+            "diskUsedPercent": 75,
+            "gatewayGroupName": "DefaultGroup",
+            "memoryUsedMax": 947404,
+            "systemCpuMax": 66,
+            "successes": 5719,
+            "systemMemoryTotal": 32464408,
+            "numAlerts": 0,
+            "parentGroupType": "",
+            "cpuUsedMin": 1,
+            "cpuUsedAvg": 0,
+            "systemCpuMin": 7,
+            "systemCpuAvg": 20,
+            "failures": 6711,
+            "gatewayName": "apimgr-6c9876cb48-g4sdq",
+            "parentGroupName": "",
+            "exceptions": 0,
+            "uptime": 35094,
+            "cpuUsedMax": 4,
+            "groupName": "System overview",
+            "memoryUsedMin": 945520,
+            "memoryUsedAvg": 946273,
+            "name": "System overview",
+            "numSLABreaches": 0,
+            "systemMemoryUsed": 32156652,
+            "gatewayId": "apimgr-6c9876cb48-g4sdq"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+triggers:
+  timer-1:
+    name: Timer
+    parameters:
+      interval: '30000'
+    enabled: true
+    invoke:
+      flow: GetServiceMetrics
+      parameters:
+        config: $.config
+        env: $.env

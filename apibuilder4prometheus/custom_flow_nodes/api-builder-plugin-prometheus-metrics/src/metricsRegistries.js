@@ -1,13 +1,14 @@
 const client = require('prom-client');
 
-var registries = [];
+var registries;
 var registriesByName = {};
 
 async function createRegistries(pluginConfig, logger) {
     if(pluginConfig.registries) {
         registries = pluginConfig.registries;
-        logger.info('Prometheus Metrics-Registries successfully created.');
+        logger.info('Prometheus Metrics-Registries already created.');
     } else {
+        registries = [];
         const systemOverviewRegistry = new client.Registry();
         createAndRegisterMetric(systemOverviewRegistry, client.Gauge, 'gateway_instance_disk_used',     'Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR)', ['instance']);
         createAndRegisterMetric(systemOverviewRegistry, client.Gauge, 'gateway_instance_cpu',           'Percentage of current process CPU usage (total usage divided by the number of cores', ['instance']);

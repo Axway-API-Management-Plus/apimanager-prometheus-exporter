@@ -1,6 +1,7 @@
 const path = require('path');
 const { SDK } = require('@axway/api-builder-sdk');
 const actions = require('./actions');
+const NodeCache = require( "node-cache" );
 const { loginToAdminNodeManager } = require('./utils');
 
 
@@ -15,8 +16,15 @@ const { loginToAdminNodeManager } = require('./utils');
  * @returns {object} An API Builder plugin.
  */
 async function getPlugin(pluginConfig, options) {
+	var cache;
+	if(!pluginConfig.testCache) {
+		cache = new NodeCache({ stdTTL: 60, useClones: false });
+	} else {
+		// Use the Test-Cache is given by a Unit-Test
+		cache = pluginConfig.testCache;
+	}
 	const sdk = new SDK({ pluginConfig });
-	sdk.load(path.resolve(__dirname, 'flow-nodes.yml'), actions);
+	sdk.load(path.resolve(__dirname, 'flow-nodes.yml'), actions, { pluginContext: { cache: cache }, pluginConfig } );
 	if(!pluginConfig.adminNodeManager) {
 		throw new Error(`Admin-Node-Manager (adminNodeManager) paramater section is missing in configuration`);
 	}

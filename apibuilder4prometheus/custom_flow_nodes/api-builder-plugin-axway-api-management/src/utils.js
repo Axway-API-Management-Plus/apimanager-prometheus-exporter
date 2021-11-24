@@ -26,6 +26,10 @@ async function sendRequest(url, options, data, expectedRC) {
 					return;
 				});
 			});
+			req.on("timeout", () => {
+				req.destroy();
+				return;
+            });
 			req.on("error", function (error) {
 				reject(error);
 				return;

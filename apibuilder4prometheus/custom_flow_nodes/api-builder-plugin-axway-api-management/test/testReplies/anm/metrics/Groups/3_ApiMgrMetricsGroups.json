@@ -1,0 +1,10 @@
+{
+    "result": [
+        {
+            "id": 6,
+            "name": "System overview",
+            "type": "SystemOverview",
+            "parentId": 0
+        }
+    ]
+}

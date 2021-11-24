@@ -1,0 +1,43 @@
+[
+  {
+    "groupType": "Service",
+    "gatewayName": "instance-1",
+    "gatewayId": "instance-1",
+    "groupName": "Greeting API",
+    "name": "Greeting API",
+    "failures": 30,
+    "successes": 2078
+  },
+  {
+    "groupType": "Service",
+    "gatewayName": "instance-1",
+    "gatewayId": "instance-1",
+    "groupName": "Petstore",
+    "name": "Petstore",
+    "failures": 4,
+    "successes": 888
+  },
+  {
+    "groupType": "Service",
+    "gatewayName": "instance-2",
+    "gatewayId": "instance-2",
+    "groupName": "FHIR CarePlan",
+    "name": "FHIR CarePlan",
+    "failures": 0,
+    "successes": 6,
+    "exceptions": 0,
+    "processingTimeAvg": 101,
+    "processingTimeMin": 16,
+    "processingTimeMax": 179,
+    "numMessages": 6
+  },
+  {
+    "groupType": "Service",
+    "gatewayName": "instance-2",
+    "gatewayId": "instance-2",
+    "groupName": "EMR-DiagnosticInfo",
+    "name": "EMR-DiagnosticInfo",
+    "failures": 33,
+    "successes": 333
+  }
+]

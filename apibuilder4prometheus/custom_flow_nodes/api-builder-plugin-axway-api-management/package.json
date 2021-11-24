@@ -17,7 +17,8 @@
 		"README.md"
 	],
 	"dependencies": {
-		"@axway/api-builder-sdk": "^1.1.13"
+		"@axway/api-builder-sdk": "^1.1.13",
+		"node-cache": "^5.1.2"
 	},
 	"peerDependencies": {
 		"@axway/api-builder-runtime": "^4.5.0"

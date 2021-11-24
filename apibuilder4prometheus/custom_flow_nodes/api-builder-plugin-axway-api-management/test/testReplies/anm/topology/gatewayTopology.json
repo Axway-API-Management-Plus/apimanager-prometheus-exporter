@@ -29,8 +29,8 @@
                 "tags": {},
                 "services": [
                     {
-                        "id": "apimgr-6c9876cb48-g4sdq",
-                        "name": "apimgr-6c9876cb48-g4sdq",
+                        "id": "apimgr",
+                        "name": "apimgr",
                         "type": "gateway",
                         "scheme": "https",
                         "hostID": "host-6",
@@ -42,8 +42,8 @@
                         "enabled": true
                     },
                     {
-                        "id": "traffic-7cb4f6989f-bjw8n",
-                        "name": "traffic-7cb4f6989f-bjw8n",
+                        "id": "instance-1",
+                        "name": "instance-1",
                         "type": "gateway",
                         "scheme": "https",
                         "hostID": "host-24",
@@ -55,8 +55,8 @@
                         "enabled": true
                     },
                     {
-                        "id": "traffic-7cb4f6989f-jbmf7",
-                        "name": "traffic-7cb4f6989f-jbmf7",
+                        "id": "instance-2",
+                        "name": "instance-2",
                         "type": "gateway",
                         "scheme": "https",
                         "hostID": "host-23",
@@ -111,8 +111,8 @@
                 "enabled": true
             },
             {
-                "id": "apimgr-6c9876cb48-g4sdq",
-                "name": "apimgr-6c9876cb48-g4sdq",
+                "id": "apimgr",
+                "name": "apimgr",
                 "type": "gateway",
                 "scheme": "https",
                 "hostID": "host-6",
@@ -124,8 +124,8 @@
                 "enabled": true
             },
             {
-                "id": "traffic-7cb4f6989f-bjw8n",
-                "name": "traffic-7cb4f6989f-bjw8n",
+                "id": "instance-1",
+                "name": "instance-1",
                 "type": "gateway",
                 "scheme": "https",
                 "hostID": "host-24",
@@ -137,8 +137,8 @@
                 "enabled": true
             },
             {
-                "id": "traffic-7cb4f6989f-jbmf7",
-                "name": "traffic-7cb4f6989f-jbmf7",
+                "id": "instance-2",
+                "name": "instance-2",
                 "type": "gateway",
                 "scheme": "https",
                 "hostID": "host-23",

@@ -22,6 +22,7 @@ const { getRegistry } = require( './metricsRegistries' );
  */
  
 async function mergeRegistries(params, options) {
+	debugger;
 	const { returnMetrics } = params;
 	const mergedRegistries = client.Registry.merge(options.pluginContext.registries);
 	if(returnMetrics) {
@@ -58,8 +59,25 @@ async function processSystemOverviewMetrics(params, options) {
 	return systemOverviewRegistry;
 }
 
+async function processServiceMetricsFromSystemOverview(params, options) {
+	const { systemOverviewMetrics } = params;
+	const { logger } = options;
+	var cache = options.pluginContext.cache;
+	const serviceRegistry = await getRegistry('serviceRegistry');
+	const metrics = serviceRegistry._metrics;
+	if (!systemOverviewMetrics) {
+		throw new Error('Missing required parameter systemOverviewMetrics');
+	}
+	logger.info(`Processing: ${systemOverviewMetrics.length} service metrics.`);
+	for(metric of systemOverviewMetrics) {
+		metrics.api_requests_success	.inc({ instance: metric.gatewayId }, await _getDiffInc(metric.successes, `${metric.gatewayId}#requestSuccessCacheKey`, cache, logger));
+		metrics.api_requests_failures	.inc({ instance: metric.gatewayId }, await _getDiffInc(metric.failures, `${metric.gatewayId}#requestFailureCacheKey`, cache, logger));
+		metrics.api_requests_exceptions	.inc({ instance: metric.gatewayId }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#requestExceptionsCacheKey`, cache, logger));
+	}
+	return serviceRegistry;
+}
+
 async function processServiceMetrics(params, options) {
-	debugger;
 	const { serviceMetrics } = params;
 	const { logger } = options;
 	var cache = options.pluginContext.cache;
@@ -68,44 +86,20 @@ async function processServiceMetrics(params, options) {
 	if (!serviceMetrics) {
 		throw new Error('Missing required parameter serviceMetrics');
 	}
-	var i = 0;
 	logger.info(`Processing: ${serviceMetrics.length} service metrics.`);
 	for(metric of serviceMetrics) {
-		logger.info(`i: ${i}`);
-		metrics.api_requests_total		.inc({ instance: metric.gatewayId, service: metric.name }, await _getDiffInc(metric.numMessages, `${metric.gatewayId}#${metric.name}#requestTotalCacheKey`, cache, logger));
-		metrics.api_requests_success	.inc({ instance: metric.gatewayId, service: metric.name }, await _getDiffInc(metric.successes, `${metric.gatewayId}#${metric.name}#requestSuccessCacheKey`, cache, logger));
-		metrics.api_requests_failures	.inc({ instance: metric.gatewayId, service: metric.name }, await _getDiffInc(metric.failures, `${metric.gatewayId}#${metric.name}#requestFailureCacheKey`, cache, logger));
-		metrics.api_requests_exceptions	.inc({ instance: metric.gatewayId, service: metric.name }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#${metric.name}#requestExceptionsCacheKey`, cache, logger));
-		i++;
+		metrics.api_requests_total		.inc({ instance: metric.gatewayId, service: metric.name }, metric.numMessages );
+		metrics.api_requests_success	.inc({ instance: metric.gatewayId, service: metric.name }, metric.successes );
+		metrics.api_requests_failures	.inc({ instance: metric.gatewayId, service: metric.name }, metric.failures );
+		metrics.api_requests_exceptions	.inc({ instance: metric.gatewayId, service: metric.name }, metric.exceptions );
 	}
 	return serviceRegistry;
-}
-
-async function _getDiffInc(currentValue, cacheKey, cache, logger) {
-	// Counts are given within the 10 minutes interval, hence they are not increasing anymore after 10 minutes. 
-	// To get a real counter, we have to calculate the difference and add this to the counter
-	var increment = 0;
-	if(cache.has(cacheKey)) {
-		// Caclulate the difference between previous value and new value
-		var previosValue = cache.get(cacheKey);
-		logger.debug(`Found previous value: ${previosValue} in cache with key: ${cacheKey}`);
-		increment = currentValue - previosValue;
-		logger.info(`Caclulated increment: ${increment} based on currentValue: ${currentValue} and ${previosValue}`);
-		cache.set(cacheKey, currentValue); // Store the given numValue
-		cache.ttl(cacheKey, 60);
-	} else {
-		logger.debug(`No previous value found. Storing current value: ${currentValue} with cache key: ${cacheKey}`);
-		// No previously found value count
-		cache.set(cacheKey, currentValue);
-		cache.ttl(cacheKey, 60);
-		increment = currentValue;
-	}
-	return increment;
 }
 
 
 module.exports = {
 	mergeRegistries,
 	processServiceMetrics,
-	processSystemOverviewMetrics
+	processSystemOverviewMetrics,
+	processServiceMetricsFromSystemOverview
 };

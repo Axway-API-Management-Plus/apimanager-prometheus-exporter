@@ -28,21 +28,8 @@
             "tags": {},
             "services": [
                 {
-                    "id": "apimgr-6c9876cb48-g4sdq",
-                    "name": "apimgr-6c9876cb48-g4sdq",
-                    "type": "gateway",
-                    "scheme": "https",
-                    "hostID": "host-6",
-                    "managementPort": 8085,
-                    "tags": {
-                        "image": "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-833aab9",
-                        "productVersion": "7.7.20210330"
-                    },
-                    "enabled": true
-                },
-                {
-                    "id": "traffic-7cb4f6989f-bjw8n",
-                    "name": "traffic-7cb4f6989f-bjw8n",
+                    "id": "instance-1",
+                    "name": "instance-1",
                     "type": "gateway",
                     "scheme": "https",
                     "hostID": "host-24",
@@ -54,8 +41,8 @@
                     "enabled": true
                 },
                 {
-                    "id": "traffic-7cb4f6989f-jbmf7",
-                    "name": "traffic-7cb4f6989f-jbmf7",
+                    "id": "instance-2",
+                    "name": "instance-2",
                     "type": "gateway",
                     "scheme": "https",
                     "hostID": "host-23",
@@ -98,21 +85,8 @@
     "emtEnabled": true,
     "services": [
         {
-            "id": "apimgr-6c9876cb48-g4sdq",
-            "name": "apimgr-6c9876cb48-g4sdq",
-            "type": "gateway",
-            "scheme": "https",
-            "hostID": "host-6",
-            "managementPort": 8085,
-            "tags": {
-                "image": "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-833aab9",
-                "productVersion": "7.7.20210330"
-            },
-            "enabled": true
-        },
-        {
-            "id": "traffic-7cb4f6989f-bjw8n",
-            "name": "traffic-7cb4f6989f-bjw8n",
+            "id": "instance-1",
+            "name": "instance-1",
             "type": "gateway",
             "scheme": "https",
             "hostID": "host-24",
@@ -124,8 +98,8 @@
             "enabled": true
         },
         {
-            "id": "traffic-7cb4f6989f-jbmf7",
-            "name": "traffic-7cb4f6989f-jbmf7",
+            "id": "instance-2",
+            "name": "instance-2",
             "type": "gateway",
             "scheme": "https",
             "hostID": "host-23",

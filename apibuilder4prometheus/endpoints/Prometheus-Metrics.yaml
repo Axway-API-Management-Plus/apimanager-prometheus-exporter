@@ -23,6 +23,21 @@ paths:
       operationId: get-metrics
       description: Returns metrics collected from Admin-Node-Manager
       x-flow: Prometheus-Metrics-get-metrics
+  /collect/metrics/service:
+    get:
+      summary: Collect Service metrics manually
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      operationId: get-collect-metrics-service
+      description: >-
+        This endpoint can be used to manually trigger the collect and
+        Prom-Registry update process for Services
+      x-flow: Prometheus-Metrics-get-collect-metrics-service
 definitions:
   User:
     title: User

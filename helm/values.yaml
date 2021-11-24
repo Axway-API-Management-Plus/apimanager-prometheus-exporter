@@ -1,6 +1,3 @@
-
-replicaCount: 1
-
 global:
   repository: "cwiechmann"
   image: "apibuilder4prometheus"
@@ -8,6 +5,8 @@ global:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+  replicas: 1
 
 anm: 
   url: 

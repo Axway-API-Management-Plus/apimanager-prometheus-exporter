@@ -6,7 +6,7 @@ metadata:
     {{- include "axway-apim-prometheus.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicas }}
   {{- end }}
   selector:
     matchLabels:
@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.global.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8443
+              containerPort: 8080
               protocol: TCP
           env: 
           - name: ANM_URL
@@ -48,11 +48,11 @@ spec:
             value: "debug"
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/metrics
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/metrics
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

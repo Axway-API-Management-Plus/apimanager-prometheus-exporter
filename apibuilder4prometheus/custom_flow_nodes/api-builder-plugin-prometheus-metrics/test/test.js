@@ -46,12 +46,12 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it('should collect all SystemOverview metrics create and return a new prom-client registry', async () => {
+		it('should collect all SystemOverview metrics', async () => {
 			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/SystemOverview/SystemOverviewTestMetrics.json'), null);
 			
 			const { value, output } = await flowNode.processSystemOverviewMetrics({ systemOverviewMetrics: testMetrics });
-			debugger;
 			expect(value).to.be.instanceOf(client.Registry);
+			// Check some of the returned metrics
 			var instanceCPUMetric = await value.getSingleMetric('gateway_instance_cpu').get();
 			expect(instanceCPUMetric.type).to.equal('gauge');
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
@@ -61,6 +61,12 @@ describe('flow-node prometheus-metrics', () => {
 					{ labels: { instance: 'instance-1'}, value: 1 }
 				]);
 			expect(await value.getSingleMetric('gateway_instance_disk_used').get()).to.be.a('object');
+			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
+			var apiRequestsSuccess = await value.getSingleMetric('api_requests_success').get();
+			var apiRequestsFailure = await value.getSingleMetric('api_requests_failures').get();
+			var apiRequestsExceptions = await value.getSingleMetric('api_requests_exceptions').get();
+			expect(apiRequestsSuccess.values).to.lengthOf(2); // Metrics for 2 API-Gateway expected
+			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 20 });
 			expect(output).to.equal('next');
 		});
 	});
@@ -79,49 +85,30 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it.skip('should collect all Service metrics into a prom-client registry', async () => {
-			// Initial data, which is used an an offset to calculate Diff-Increments
-			var initialTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/1_InitialServiceMetrics.json'), null);
-			await flowNode.processServiceMetrics({ serviceMetrics: initialTestMetrics });
-			var incrementedTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/2_IncrementedServiceMetrics.json'), null);
-			// Re-Run the same with some data incremented - Expected is the difference
-			const { value, output } = await flowNode.processServiceMetrics({ serviceMetrics: incrementedTestMetrics });
+		it.only('should update the service registry based on the given service metrics', async () => {
+			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/1_ServiceMetrics.json'), null);
+			const { value, output } = await flowNode.processServiceMetrics({ serviceMetrics: testMetrics });
 
 			expect(value).to.be.instanceOf(client.Registry);
-			debugger;
+			
 			var apiRequestsTotal = await value.getSingleMetric('api_requests_total').get();
 			var apiRequestsSuccess = await value.getSingleMetric('api_requests_success').get();
 			var apiRequestsFailure = await value.getSingleMetric('api_requests_failures').get();
 			var apiRequestsExceptions = await value.getSingleMetric('api_requests_exceptions').get();
+			
 			expect(apiRequestsTotal.type).to.equal('counter');
-			expect(apiRequestsTotal.values).to.lengthOf(13); // Metrics for 13 Services are expected
-			expect(apiRequestsTotal.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 20 });
-			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 10 });
-			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 5 });
-			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 5 });
-			expect(output).to.equal('next');
-		});
+			expect(apiRequestsTotal.values).to.lengthOf(4); // 4 Metrics are expected
+			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 2078 });
+			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 30 });
+			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 1 });
 
-		it.skip('should gracefully handle if previous count is smaller than current value resulting in a negative increment', async () => {
-			// Initial data, has some bigger values now, than the second run
-			var initialTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/2_IncrementedServiceMetrics.json'), null);
-			// This leads to a negative increment
-			var incrementedTestMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Service/1_InitialServiceMetrics.json'), null);
-			await flowNode.processServiceMetrics({ serviceMetrics: initialTestMetrics });
-			const { value, output } = await flowNode.processServiceMetrics({ serviceMetrics: incrementedTestMetrics });
+			expect(apiRequestsSuccess.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 888 });
+			expect(apiRequestsFailure.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 4 });
+			expect(apiRequestsExceptions.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 1 });
 
-			expect(value).to.be.instanceOf(client.Registry);
-			debugger;
-			var apiRequestsTotal = await value.getSingleMetric('api_requests_total').get();
-			var apiRequestsSuccess = await value.getSingleMetric('api_requests_success').get();
-			var apiRequestsFailure = await value.getSingleMetric('api_requests_failures').get();
-			var apiRequestsExceptions = await value.getSingleMetric('api_requests_exceptions').get();
-			expect(apiRequestsTotal.type).to.equal('counter');
-			expect(apiRequestsTotal.values).to.lengthOf(13); // Metrics for 13 Services are expected
-			expect(apiRequestsTotal.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 20 });
-			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 10 });
-			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 5 });
-			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 5 });
+			expect(apiRequestsSuccess.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 6 });
+			expect(apiRequestsFailure.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
+			expect(apiRequestsExceptions.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
 			expect(output).to.equal('next');
 		});
 	});

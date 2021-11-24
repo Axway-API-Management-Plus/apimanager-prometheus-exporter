@@ -31,6 +31,32 @@ flow-nodes:
               message:
                 type: string
 
+      processServiceMetricsFromSystemOverview: 
+        name: Service metrics from SystemOverview
+        description: Gets the Service information summary from SystemOverview due to https://support.axway.com/en/case-global/view/id/01314580
+        parameters:
+          systemOverviewMetrics:
+            name: System overview metrics
+            description: System overview metrics collected from the ANM.
+            required: true
+            schema:
+              type: array
+        returns:
+          name: Next
+          description: The Service Metrics-Registry
+          context: $.serviceMetricsRegistry
+          schema:
+            type: object
+        throws:
+          name: Error
+          description: An unexpected error was encountered.
+          context: $.error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
       processServiceMetrics: 
         name: Process Service metrics
         description: Processes the given Service metrics and updates the Service-Registry metrics.
@@ -43,7 +69,7 @@ flow-nodes:
               type: array
         returns:
           name: Next
-          description: The SystemOverview Metrics-Registry
+          description: The Service Metrics-Registry
           context: $.serviceMetricsRegistry
           schema:
             type: object

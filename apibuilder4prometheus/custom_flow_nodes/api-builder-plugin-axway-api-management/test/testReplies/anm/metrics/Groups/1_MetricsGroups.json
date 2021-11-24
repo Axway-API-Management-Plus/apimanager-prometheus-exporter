@@ -1,0 +1,106 @@
+{
+    "result": [
+        {
+            "id": 11,
+            "name": "AccumalativeAuthenticatedClientsCount",
+            "type": "Clients",
+            "parentId": 0
+        },
+        {
+            "id": 12,
+            "name": "AccumalativeWebServiceCount",
+            "type": "Services",
+            "parentId": 0
+        },
+        {
+            "id": 6,
+            "name": "System overview",
+            "type": "SystemOverview",
+            "parentId": 0
+        },
+        {
+            "id": 10,
+            "name": "9c0fdc15-14a6-4876-990f-3aec88bee841",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 15,
+            "name": "5448f1ea-a542-44e7-abf0-a10f3d3ad059",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 20,
+            "name": "Pass Through",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 26,
+            "name": "e18036dc-b1ac-4f90-a37c-19b6e107c875",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 27,
+            "name": "f60b5ee8-3fe3-43fc-9ae9-be8868fe2011",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 32,
+            "name": "96ed684c-b6af-4ef4-b8b6-12f5d4411edc",
+            "type": "Client",
+            "parentId": 0
+        },
+        {
+            "id": 7,
+            "name": "mocked-apis:8280",
+            "type": "TargetServer",
+            "parentId": 0
+        },
+        {
+            "id": 8,
+            "name": "Greeting API",
+            "type": "Service",
+            "parentId": 0
+        },
+        {
+            "id": 9,
+            "name": "Greet",
+            "type": "Method",
+            "parentId": 8
+        },
+        {
+            "id": 16,
+            "name": "Petstore",
+            "type": "Service",
+            "parentId": 0
+        },
+        {
+            "id": 17,
+            "name": "getPetById",
+            "type": "Method",
+            "parentId": 16
+        },
+        {
+            "id": 23,
+            "name": "getUserByName",
+            "type": "Method",
+            "parentId": 16
+        },
+        {
+            "id": 24,
+            "name": "findPetsByStatus",
+            "type": "Method",
+            "parentId": 16
+        },
+        {
+            "id": 25,
+            "name": "getInventory",
+            "type": "Method",
+            "parentId": 16
+        }
+    ]
+}

@@ -31,68 +31,8 @@
 			"params"
 		]
 	},
-	"start": "axway-api-management.1",
+	"start": "prometheus-metrics.1",
 	"nodes": {
-		"axway-api-management.1": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Lookup topology",
-			"method": "lookupTopology",
-			"parameters": [],
-			"outputs": {
-				"next": {
-					"routes": [
-						"axway-api-management.2",
-						"axway-api-management.3"
-					],
-					"context": "$.gatewayTopology",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Lookup topology"
-		},
-		"axway-api-management.2": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get SystemOverview metrics",
-			"method": "getMetrics",
-			"parameters": [
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				},
-				{
-					"name": "metricsType",
-					"type": "string",
-					"value": "\"SystemOverview\"",
-					"metaName": "Metrics type",
-					"metaDescription": "The type of metrics to collect"
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.2"
-					],
-					"context": "$.systemOverviewMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.4"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get metrics"
-		},
 		"http.1": {
 			"type": "nodehandler://axway-flow/http",
 			"name": "Return metrics",
@@ -129,263 +69,6 @@
 			},
 			"metaMethod": "Set HTTP Response"
 		},
-		"prometheus-metrics.1": {
-			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
-			"name": "Get metrics",
-			"method": "mergeRegistries",
-			"parameters": [
-				{
-					"name": "returnMetrics",
-					"type": "boolean",
-					"value": "true",
-					"metaName": "Return metrics",
-					"metaDescription": "If true, the flow returns the metrics as required by the Prometheus scraper."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"http.1"
-					],
-					"context": "$.prometheusMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.3"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Merge registries"
-		},
-		"axway-api-management.3": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get service metrics",
-			"method": "getMetrics",
-			"parameters": [
-				{
-					"name": "metricsType",
-					"type": "string",
-					"value": "\"Service\"",
-					"metaName": "Metrics type",
-					"metaDescription": "The type of metrics to collect"
-				},
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.3"
-					],
-					"context": "$.serviceMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.4"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get metrics"
-		},
-		"axway-api-management.4": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get Client metrics",
-			"method": "getMetrics",
-			"parameters": [
-				{
-					"name": "metricsType",
-					"type": "string",
-					"value": "\"Client\"",
-					"metaName": "Metrics type",
-					"metaDescription": "The type of metrics to collect"
-				},
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [],
-					"context": "$.clientMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get metrics"
-		},
-		"axway-api-management.5": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get TargetServer metrics",
-			"method": "getMetrics",
-			"parameters": [
-				{
-					"name": "metricsType",
-					"type": "string",
-					"value": "\"TargetServer\"",
-					"metaName": "Metrics type",
-					"metaDescription": "The type of metrics to collect"
-				},
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [],
-					"context": "$.targetServerMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get metrics"
-		},
-		"prometheus-metrics.2": {
-			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
-			"name": "Process System-Overview metrics",
-			"method": "processSystemOverviewMetrics",
-			"parameters": [
-				{
-					"name": "systemOverviewMetrics",
-					"type": "jsonpath",
-					"value": "$.systemOverviewMetrics",
-					"metaName": "System overview metrics",
-					"metaDescription": "System overview metrics collected from the ANM."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.1"
-					],
-					"context": "$.systemOverviewMetricsRegistry",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.3"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Process System-Overview metrics"
-		},
-		"prometheus-metrics.3": {
-			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
-			"name": "Process Service metrics",
-			"method": "processServiceMetrics",
-			"parameters": [
-				{
-					"name": "serviceMetrics",
-					"type": "jsonpath",
-					"value": "$.serviceMetrics",
-					"metaName": "Service metrics",
-					"metaDescription": "Service metrics collected from the ANM."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.1"
-					],
-					"context": "$.serviceMetricsRegistry",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.2"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Process Service metrics"
-		},
-		"http.2": {
-			"type": "nodehandler://axway-flow/http",
-			"name": "Return Error",
-			"method": "setresponse",
-			"parameters": [
-				{
-					"name": "body",
-					"type": "jsonpath",
-					"value": "$.error",
-					"metaName": "Body",
-					"metaDescription": "The response payload"
-				},
-				{
-					"name": "status",
-					"type": "number",
-					"value": "500",
-					"metaName": "Status",
-					"metaDescription": "The HTTP status code"
-				}
-			],
-			"outputs": {
-				"next": {
-					"context": "$.response",
-					"routes": [],
-					"metaName": "Next"
-				}
-			},
-			"metaMethod": "Set HTTP Response"
-		},
-		"http.3": {
-			"type": "nodehandler://axway-flow/http",
-			"name": "Return Error",
-			"method": "setresponse",
-			"parameters": [
-				{
-					"name": "status",
-					"type": "number",
-					"value": "500",
-					"metaName": "Status",
-					"metaDescription": "The HTTP status code"
-				},
-				{
-					"name": "body",
-					"type": "jsonpath",
-					"value": "$.error",
-					"metaName": "Body",
-					"metaDescription": "The response payload"
-				}
-			],
-			"outputs": {
-				"next": {
-					"context": "$.response",
-					"routes": [],
-					"metaName": "Next"
-				}
-			},
-			"metaMethod": "Set HTTP Response"
-		},
 		"http.4": {
 			"type": "nodehandler://axway-flow/http",
 			"name": "Return Error",
@@ -394,18 +77,50 @@
 				{
 					"name": "status",
 					"type": "jsonpath",
-					"value": "$.error"
+					"value": "$.error",
+					"metaName": "Status",
+					"metaDescription": "The HTTP status code"
 				},
 				{
 					"name": "body",
 					"type": "jsonpath",
-					"value": "$.error"
+					"value": "$.error",
+					"metaName": "Body",
+					"metaDescription": "The response payload"
 				}
 			],
 			"outputs": {
 				"next": {
 					"context": "$.response",
-					"routes": []
+					"routes": [],
+					"metaName": "Next"
+				}
+			},
+			"metaMethod": "Set HTTP Response"
+		},
+		"prometheus-metrics.1": {
+			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
+			"name": "Merge registries",
+			"method": "mergeRegistries",
+			"parameters": [
+				{
+					"name": "returnMetrics",
+					"type": "boolean",
+					"value": "true"
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"http.1"
+					],
+					"context": "$.prometheusMetrics"
+				},
+				"error": {
+					"routes": [
+						"http.4"
+					],
+					"context": "$.error"
 				}
 			}
 		}
