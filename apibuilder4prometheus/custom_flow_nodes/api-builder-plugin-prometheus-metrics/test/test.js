@@ -46,7 +46,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it('should collect all SystemOverview metrics', async () => {
+		it.skip('should collect all SystemOverview metrics', async () => {
 			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/SystemOverview/SystemOverviewTestMetrics.json'), null);
 			
 			const { value, output } = await flowNode.processSystemOverviewMetrics({ systemOverviewMetrics: testMetrics });
