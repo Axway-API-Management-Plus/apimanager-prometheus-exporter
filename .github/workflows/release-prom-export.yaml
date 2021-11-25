@@ -9,6 +9,9 @@ jobs:
     name: Release Axway Prometheus-Exporter
     runs-on: ubuntu-latest
 
+    env:
+      workingDirectory: 'apibuilder4prometheus'
+
     steps:
     - name: Publish Docker image
       uses: elgohr/Publish-Docker-Github-Action@2.13
