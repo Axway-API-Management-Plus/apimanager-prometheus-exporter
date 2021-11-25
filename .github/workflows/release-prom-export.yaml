@@ -5,6 +5,19 @@ on:
     types: [published]
 
 jobs:
+  release-apim-prom-exporter:
+    name: Release Axway Prometheus-Exporter
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Publish Docker image
+      uses: elgohr/Publish-Docker-Github-Action@2.13
+      with:
+        name: cwiechmann/apibuilder4prometheus
+        workdir: 'apibuilder4prometheus'
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: "${{ github.event.release.tag_name }}"
   release-helm-chart:
     name: Release Helm chart
     needs: release-elk-apim
