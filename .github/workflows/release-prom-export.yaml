@@ -20,7 +20,7 @@ jobs:
         tags: "${{ github.event.release.tag_name }}"
   release-helm-chart:
     name: Release Helm chart
-    needs: release-elk-apim
+    needs: release-apim-prom-exporter
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
