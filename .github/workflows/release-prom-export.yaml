@@ -1,0 +1,24 @@
+name: Release Axway Prometheus-Exporter
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-helm-chart:
+    name: Release Helm chart
+    needs: release-elk-apim
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create packaged Helm-Chart
+      run: helm package ./helm --dependency-update --app-version ${{ github.event.release.tag_name }} --version ${{ github.event.release.tag_name }}
+    - name: upload-helm-chart
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: axway-apim-prometheus-${{ github.event.release.tag_name }}.tgz
+        asset_name: helm-chart-axway-apim-prometheus-${{ github.event.release.tag_name }}.tgz
+        asset_content_type: application/gzip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
