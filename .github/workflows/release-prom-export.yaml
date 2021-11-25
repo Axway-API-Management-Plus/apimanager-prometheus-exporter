@@ -13,6 +13,7 @@ jobs:
       workingDirectory: 'apibuilder4prometheus'
 
     steps:
+    - uses: actions/checkout@v2
     - name: Publish Docker image
       uses: elgohr/Publish-Docker-Github-Action@2.13
       with:
