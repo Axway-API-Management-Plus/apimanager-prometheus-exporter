@@ -26,7 +26,7 @@ You can find an example here: [example.local.values.yaml](https://raw.githubuser
 To install the Helm-Chart (until release directly from GitHub):  
 ```
 wget -O local.values.yaml https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/helm/examples/example.local.values.yaml
-helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/tree/master/helm
+helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/releases/download/v0.1.0/helm-chart-axway-apim-prometheus-v0.1.0.tgz
 ```
 
 ## Contributing
