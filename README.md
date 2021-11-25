@@ -17,24 +17,17 @@ exporter. The received messages are parsed, potentially blacklisted and and expo
 Based on the collected data Dashboard like this example can be created:
 ![Grafana Dashboard]( https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-sample-grafana-dashboard.png )
 
-
-
 ## Install
 
-The goal of the solution is to run the Axway API management Prometheus exporter as a Docker container. A Helm-Chart is provided for installation in a Kubernetes cluster. We recommend creating a `values.local.yaml` to be able to version their configuration accordingly. 
+The goal of the solution is to run the Axway API-Management Prometheus exporter as a Docker container. A Helm-Chart is provided for installation into a Kubernetes cluster. We recommend creating a `values.local.yaml` to be able to version their configuration accordingly. Please check the base [values.yaml](https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/helm/values.yaml) for more documentation about individidual parameters.  
 
-You can find an example here: 
+You can find an example here: [example.local.values.yaml](https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/helm/examples/example.local.values.yaml)
 
-To install the Helm-Chart (until release directly from GitHub):
-`helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/tree/master/helm`
-
-## Changelog
-- 0.0.1 - 05.08.2019
-  - initial version
-  
-## Limitations/Caveats
-- No historical data can be imported into Prometheus
-
+To install the Helm-Chart (until release directly from GitHub):  
+```
+wget -O local.values.yaml https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/helm/examples/example.local.values.yaml
+helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/tree/master/helm
+```
 
 ## Contributing
 
