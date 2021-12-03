@@ -1,5 +1,19 @@
 const APIBuilder = require('@axway/api-builder-runtime');
 const server = new APIBuilder();
+const promBundle = require("express-prom-bundle");
+debugger;
+const metricsMiddleware = promBundle({
+	includeMethod: true, metricsPath: '/api/my/metrics',
+	includePath: true, 
+	includeStatusCode: true, 
+	includeUp: true,
+	customLabels: {project_name: 'prom-exporter'},
+	promClient: {
+		collectDefaultMetrics: {
+		}
+	}
+});
+server.middleware.app.use(metricsMiddleware);
 
 // lifecycle examples
 server.once('starting', function () {

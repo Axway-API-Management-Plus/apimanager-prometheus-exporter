@@ -27,8 +27,18 @@
 		"@axway/api-builder-plugin-ft-timer": "^1.0.3",
 		"@axway/api-builder-plugin-invoke-flow": "^1.1.1",
 		"@axway/api-builder-runtime": "^4.69.0",
+		"@opentelemetry/api": "^1.0.3",
+		"@opentelemetry/exporter-prometheus": "^0.27.0",
+		"@opentelemetry/instrumentation": "^0.27.0",
+		"@opentelemetry/instrumentation-express": "^0.27.0",
+		"@opentelemetry/instrumentation-http": "^0.27.0",
+		"@opentelemetry/metrics": "^0.24.0",
+		"@opentelemetry/sdk-node": "^0.27.0",
+		"@opentelemetry/sdk-trace-node": "^1.0.1",
 		"api-builder-plugin-axway-api-management": "file:custom_flow_nodes/api-builder-plugin-axway-api-management",
-		"api-builder-plugin-prometheus-metrics": "file:custom_flow_nodes/api-builder-plugin-prometheus-metrics"
+		"api-builder-plugin-prometheus-metrics": "file:custom_flow_nodes/api-builder-plugin-prometheus-metrics",
+		"express-prom-bundle": "^6.4.1",
+		"prom-client": "^14.0.1"
 	},
 	"devDependencies": {
 		"@axway/api-builder-admin": "^1.44.13",
