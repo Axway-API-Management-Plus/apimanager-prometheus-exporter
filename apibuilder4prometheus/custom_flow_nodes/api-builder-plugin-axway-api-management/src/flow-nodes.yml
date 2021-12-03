@@ -24,7 +24,7 @@ flow-nodes:
 
       getMetricsGroups:
         name: Get metrics groups
-        description: "Gets all monitored metrics groups from the ANM for all API-Gateway instances. Important to know, API-Gateway instances are creating groups locally."
+        description: "Gets all monitored metrics groups from the ANM for all API-Gateway instances. There are several metrics groups, for Services, SystemOverview, Clients, Methods, etc. These groups are subsequently used to load the data from Timeline Metrics. Important to know: API-Gateway instances are creating groups locally."
         parameters:
           topology:
             name: Topology
@@ -79,6 +79,30 @@ flow-nodes:
             name: Next
             description: Metrics
             context: $.metrics
+            schema:
+              type: array
+          error:
+            name: Error
+            description: An unexpected error happened
+            context: $.error
+            schema:
+              type: object
+
+      getSummaryMetrics:
+        name: Get summary metrics
+        description: "Returns the summary metrics information provided by the monitoring/metrics/summary endpoint. The information is retrieved for each API gateway instance and returned as an array."
+        parameters:
+          topology:
+            name: Topology
+            description: The topology object, which is used to iterate over all API-Gateway instances.
+            required: true
+            schema:
+              type: object
+        outputs:
+          next:
+            name: Next
+            description: Summary metrics array for all API-Gateway instances.
+            context: $.summaryMetrics
             schema:
               type: array
           error:

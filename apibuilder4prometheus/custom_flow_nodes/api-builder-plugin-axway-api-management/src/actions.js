@@ -72,6 +72,25 @@ async function getMetricsGroups(params, options) {
 	return metricGroups;
 }
 
+async function getSummaryMetrics(params, options) {
+	const { topology } = params;
+	const anmConfig = options.pluginConfig.adminNodeManager;
+	const { logger } = options;
+	if (!topology) {
+		throw new Error('Missing required parameter: topology');
+	}
+	var summaryMetrics = [];
+	for (const [key, service] of Object.entries(topology.services)) {
+		var instanceMetrics = await _getMetrics('summary', anmConfig, service.id, logger);
+		if(!instanceMetrics || instanceMetrics.length==0) {
+			logger.warn(`No summary metrics found for gateway instance: ${service.id}`);
+			continue;
+		}
+		summaryMetrics = summaryMetrics.concat(instanceMetrics);
+	}
+	return summaryMetrics;
+}
+
 async function getTimelineMetrics(params, options) {
 	const { topology, metricsType, metricsGroups } = params;
 	const anmConfig = options.pluginConfig.adminNodeManager;
@@ -126,28 +145,6 @@ async function getTimelineMetrics(params, options) {
 		}
 		logger.info(`Successfully created metrics.`);
 		cache.set(gwInstanceId, pointEnd)
-	}
-	return metrics;
-}
-
-async function getMetrics(params, options) {
-	const { topology, metricsType } = params;
-	const anmConfig = options.pluginConfig.adminNodeManager;
-	const { logger } = options;
-	if (!topology) {
-		throw new Error('Missing required parameter: topology');
-	}
-	if (!metricsType) {
-		throw new Error('Missing required parameter: metricsType');
-	}
-	var metrics = [];
-	for (const [key, service] of Object.entries(topology.services)) {
-		var instanceMetrics = await _getMetrics('summary', anmConfig, service.id, logger);
-		if(!instanceMetrics || instanceMetrics.length==0) {
-			logger.warn(`No metrics found for gateway instance: ${service.id}`);
-			continue;
-		}
-		metrics = metrics.concat(instanceMetrics);
 	}
 	return metrics;
 }
@@ -248,5 +245,5 @@ module.exports = {
 	lookupTopology,
 	getMetricsGroups,
 	getTimelineMetrics,
-	getMetrics
+	getSummaryMetrics
 };

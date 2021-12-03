@@ -2,10 +2,24 @@ triggers:
   timer-1:
     name: Timer
     parameters:
-      interval: '15000'
+      interval: $.config.promExporter.pollServiceMetricsInterval
     enabled: true
     invoke:
-      flow: GetServiceMetrics
+      flow: Prometheus-Metrics-get-collect-metrics-service
       parameters:
         config: $.config
         env: $.env
+        params: $
+        request: $
+  timer-2:
+    name: Timer
+    parameters:
+      interval: $.config.promExporter.pollSummaryMetricsInterval
+    enabled: true
+    invoke:
+      flow: Prometheus-Metrics-get-collect-metrics-system
+      parameters:
+        config: $.config
+        env: $.env
+        params: $
+        request: $

@@ -32,16 +32,17 @@ async function mergeRegistries(params, options) {
 	}
 }
 
-async function processSystemOverviewMetrics(params, options) {
-	const { systemOverviewMetrics } = params;
+async function processSummaryMetrics(params, options) {
+	debugger;
+	const { summaryMetrics } = params;
 	const { logger } = options;
 	const systemOverviewRegistry = await getRegistry('systemOverviewRegistry');
 	const metrics = systemOverviewRegistry._metrics;
-	if (!systemOverviewMetrics) {
-		throw new Error('Missing required parameter systemOverviewMetrics');
+	if (!summaryMetrics) {
+		throw new Error('Missing required parameter summaryMetrics');
 	}
 
-	for(metric of systemOverviewMetrics) {
+	for(metric of summaryMetrics) {
 		metrics.gateway_instance_disk_used		.set({ instance: metric.gatewayId }, metric.diskUsedPercent);
 		metrics.gateway_instance_cpu			.set({ instance: metric.gatewayId }, metric.cpuUsed);
 		metrics.gateway_instance_cpu_avg		.set({ instance: metric.gatewayId }, metric.cpuUsedAvg);
@@ -100,6 +101,6 @@ async function processServiceMetrics(params, options) {
 module.exports = {
 	mergeRegistries,
 	processServiceMetrics,
-	processSystemOverviewMetrics,
+	processSummaryMetrics,
 	processServiceMetricsFromSystemOverview
 };

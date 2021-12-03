@@ -16,7 +16,7 @@
             "systemCpuMin": 7,
             "systemCpuAvg": 20,
             "failures": 6711,
-            "gatewayName": "apimgr-6c9876cb48-g4sdq",
+            "gatewayName": "instance-1",
             "parentGroupName": "",
             "exceptions": 0,
             "uptime": 35094,
@@ -27,7 +27,7 @@
             "name": "System overview",
             "numSLABreaches": 0,
             "systemMemoryUsed": 32156652,
-            "gatewayId": "apimgr-6c9876cb48-g4sdq"
+            "gatewayId": "instance-1"
         }
     ]
 }

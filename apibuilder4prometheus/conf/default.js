@@ -16,6 +16,13 @@
  * variables or perform logic in this file if needed.
  */
 module.exports = {
+	promExporter: {
+		// Controls the interval how often the Service-Metrics should be collected from the ANM
+		pollServiceMetricsInterval: process.env.POLL_SERVICE_METRICS_INTERVAL || '15000',
+		// Summary metrics are used to obtain SystemOverview information (e.g. CPU-, Disk-Usage, etc.)
+		pollSummaryMetricsInterval: process.env.POLL_SUMMARY_METRICS_INTERVAL || '15000'
+	},
+
 	// This is your generated API key.  It was generated uniquely when you
 	// created this project. DO NOT SHARE this key with other services and be
 	// careful with this key since it controls access to your API using the

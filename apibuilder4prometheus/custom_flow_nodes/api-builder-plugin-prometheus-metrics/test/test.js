@@ -32,12 +32,12 @@ describe('flow-node prometheus-metrics', () => {
 		});
 	});
 
-	describe('#processSystemOverviewMetrics', () => {
+	describe('#processSummaryMetrics', () => {
 		it('should error when missing required parameter', async () => {
 			// Disable automatic input validation (we want the action to handle this)
 			plugin.setOptions({ validateInputs: false });
 
-			const { value, output } = await flowNode.processSystemOverviewMetrics({
+			const { value, output } = await flowNode.processSummaryMetrics({
 				systemOverviewMetrics: null
 			});
 
@@ -46,10 +46,10 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it.skip('should collect all SystemOverview metrics', async () => {
-			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/SystemOverview/SystemOverviewTestMetrics.json'), null);
+		it.only('should collect all SystemOverview metrics from the given summary metrics', async () => {
+			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Summary/1_SummaryTestMetrics.json'), null);
 			
-			const { value, output } = await flowNode.processSystemOverviewMetrics({ systemOverviewMetrics: testMetrics });
+			const { value, output } = await flowNode.processSummaryMetrics({ summaryMetrics: testMetrics });
 			expect(value).to.be.instanceOf(client.Registry);
 			// Check some of the returned metrics
 			var instanceCPUMetric = await value.getSingleMetric('gateway_instance_cpu').get();
@@ -57,16 +57,20 @@ describe('flow-node prometheus-metrics', () => {
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
 				[ 
-					{ labels: { instance: 'instance-50'}, value: 0 },
-					{ labels: { instance: 'instance-1'}, value: 1 }
+					{ labels: { instance: 'instance-1'}, value: 0 },
+					{ labels: { instance: 'instance-2'}, value: 1 }
 				]);
 			expect(await value.getSingleMetric('gateway_instance_disk_used').get()).to.be.a('object');
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
-			var apiRequestsSuccess = await value.getSingleMetric('api_requests_success').get();
-			var apiRequestsFailure = await value.getSingleMetric('api_requests_failures').get();
-			var apiRequestsExceptions = await value.getSingleMetric('api_requests_exceptions').get();
-			expect(apiRequestsSuccess.values).to.lengthOf(2); // Metrics for 2 API-Gateway expected
-			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'traffic-7cb4f6989f-bjw8n', "service": "Petstore"}, value: 20 });
+			var diskUsed = await value.getSingleMetric('gateway_instance_disk_used').get();
+			var minMemory = await value.getSingleMetric('gateway_instance_memory_min').get();
+			
+			expect(diskUsed.values).to.lengthOf(2); 
+			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1'}, value: 26 });
+			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'instance': 'instance-2'}, value: 55 });
+			expect(minMemory.values).to.lengthOf(2); 
+			expect(minMemory.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1'}, value: 956784 });
+			expect(minMemory.values[1]).to.deep.equal( { labels: { 'instance': 'instance-2'}, value: 1441080 });
 			expect(output).to.equal('next');
 		});
 	});

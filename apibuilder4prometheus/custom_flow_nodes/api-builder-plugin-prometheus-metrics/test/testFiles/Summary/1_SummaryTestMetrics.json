@@ -15,7 +15,7 @@
       "systemCpuMin": 5,
       "systemCpuAvg": 17,
       "failures": 7587,
-      "gatewayName": "traffic-646c656894-894xm",
+      "gatewayName": "instance-1",
       "parentGroupName": "",
       "exceptions": 0,
       "uptime": 89970,
@@ -26,7 +26,7 @@
       "name": "System overview",
       "numSLABreaches": 0,
       "systemMemoryUsed": 32145900,
-      "gatewayId": "traffic-646c656894-894xm"
+      "gatewayId": "instance-1"
   },
     {
       "groupType": "SystemOverview",
@@ -55,6 +55,6 @@
       "name": "System overview",
       "numSLABreaches": 0,
       "systemMemoryUsed": 15510580,
-      "gatewayId": "instance-1"
+      "gatewayId": "instance-2"
     }
   ]

@@ -1,17 +1,17 @@
 flow-nodes:
   prometheus-metrics:
     name: Prometheus metrics
-    icon: prometheus_logo.svg
+    icon: prom-icon.png
     description: Flow node used to generate required Prometheus metrics
     category: Prometheus
     methods:
-      processSystemOverviewMetrics: 
-        name: Process System-Overview metrics
-        description: Processes the given SystemOverview metrics and updates the SystemOverview-Registry metrics.
+      processSummaryMetrics: 
+        name: Process summary metrics
+        description: Processes the given summary metrics. Currently it is used to extract system overview information to update the System Prometheus-Metrics registry.
         parameters:
-          systemOverviewMetrics:
-            name: System overview metrics
-            description: System overview metrics collected from the ANM.
+          summaryMetrics:
+            name: Summary metrics
+            description: Array of summary metrics
             required: true
             schema:
               type: array
