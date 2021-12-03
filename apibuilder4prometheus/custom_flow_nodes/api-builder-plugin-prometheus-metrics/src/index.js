@@ -2,7 +2,7 @@ const path = require('path');
 const { SDK } = require('@axway/api-builder-sdk');
 const actions = require('./actions');
 const NodeCache = require( "node-cache" );
-const { createRegistries } = require( './metricsRegistries' );
+const { createRegistry } = require( './metricsRegistry' );
 
 /**
  * Resolves the API Builder plugin.
@@ -17,8 +17,8 @@ const { createRegistries } = require( './metricsRegistries' );
 async function getPlugin(pluginConfig, options) {
 	const cache = new NodeCache({ stdTTL: 60, useClones: false });
 	const sdk = new SDK({ pluginConfig });
-	var registries = await createRegistries(pluginConfig, options.logger);
-	sdk.load(path.resolve(__dirname, 'flow-nodes.yml'), actions, { pluginContext: { cache: cache, registries }, pluginConfig } );
+	var registry = await createRegistry(pluginConfig, options.logger);
+	sdk.load(path.resolve(__dirname, 'flow-nodes.yml'), actions, { pluginContext: { cache: cache, registry }, pluginConfig } );
 	return sdk.getPlugin();
 }
 

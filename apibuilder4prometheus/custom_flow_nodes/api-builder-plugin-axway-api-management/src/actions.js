@@ -109,7 +109,7 @@ async function getTimelineMetrics(params, options) {
 	for (const [key, type] of Object.entries(metricTypes[metricsType])) { 
 		metricTypesQuery += `&metricType=${type}`;
 	}
-	debugger;
+	
 	var metrics = [];
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var gwInstanceId = service.id;

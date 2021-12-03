@@ -19,7 +19,7 @@ describe('Endpoints', function () {
 	after(() => stopApiBuilder(server));
 
 	describe('Prom-Metrics', () => {
-		it.only('[Endpoint-0001] should be able to hit Prom-Metrics endpoint', () => {
+		it('[Endpoint-0001] should be able to hit Prom-Metrics endpoint', () => {
 			return requestAsync({
 				method: 'GET',
 				uri: `http://localhost:${server.apibuilder.port}/api/metrics`,

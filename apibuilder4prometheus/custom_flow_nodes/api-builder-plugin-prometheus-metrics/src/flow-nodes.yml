@@ -5,6 +5,31 @@ flow-nodes:
     description: Flow node used to generate required Prometheus metrics
     category: Prometheus
     methods:
+      processTopologyInfo: 
+        name: Process topology information
+        description: Extracts version information from the topology to update the internal metrics registry.
+        parameters:
+          gatewayTopology:
+            name: Gateway topology
+            description: Gateway topology information.
+            required: true
+            schema:
+              type: object
+        returns:
+          name: Next
+          description: The SystemOverview Metrics-Registry
+          context: $.systemOverviewMetricsRegistry
+          schema:
+            type: object
+        throws:
+          name: Error
+          description: An unexpected error was encountered.
+          context: $.error
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
       processSummaryMetrics: 
         name: Process summary metrics
         description: Processes the given summary metrics. Currently it is used to extract system overview information to update the System Prometheus-Metrics registry.
@@ -83,9 +108,9 @@ flow-nodes:
               message:
                 type: string
 
-      mergeRegistries: 
-        name: Merge registries
-        description: Merges metrics into single registry and returns the Prometheus metrics endpoint
+      getMetrics: 
+        name: Get metrics
+        description: Get the metrics based on the current state of the internal metrics registry
         parameters:
           returnMetrics:
             name: Return metrics

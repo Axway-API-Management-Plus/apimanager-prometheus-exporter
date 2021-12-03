@@ -1,5 +1,5 @@
 const client = require('prom-client');
-const { getRegistry } = require( './metricsRegistries' );
+const { getRegistry } = require( './metricsRegistry' );
 /**
  * Action method.
  *
@@ -20,24 +20,23 @@ const { getRegistry } = require( './metricsRegistries' );
  * @return {*} The response value (resolves to "next" output, or if the method
  *	 does not define "next", the first defined output).
  */
- 
-async function mergeRegistries(params, options) {
+ async function getMetrics(params, options) {
 	debugger;
 	const { returnMetrics } = params;
-	const mergedRegistries = client.Registry.merge(options.pluginContext.registries);
+	const registry = await getRegistry();
+	registry._metrics.up.set({  }, 1);
 	if(returnMetrics) {
-		return mergedRegistries.metrics();
+		return registry.metrics();
 	} else {
-		return mergedRegistries;
+		return registry;
 	}
 }
 
 async function processSummaryMetrics(params, options) {
-	debugger;
 	const { summaryMetrics } = params;
 	const { logger } = options;
-	const systemOverviewRegistry = await getRegistry('systemOverviewRegistry');
-	const metrics = systemOverviewRegistry._metrics;
+	const registry = await getRegistry();
+	const metrics = registry._metrics;
 	if (!summaryMetrics) {
 		throw new Error('Missing required parameter summaryMetrics');
 	}
@@ -57,15 +56,33 @@ async function processSummaryMetrics(params, options) {
 		metrics.axway_apigateway_system_memory			.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed);
 		metrics.axway_apigateway_system_memory_total		.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal);
 	}
-	return systemOverviewRegistry;
+	return registry;
 }
+
+async function processTopologyInfo(params, options) {
+	debugger;
+	const { gatewayTopology } = params;
+	const { logger } = options;
+	const registry = await getRegistry();
+	const metrics = registry._metrics;
+	if (!gatewayTopology) {
+		throw new Error('Missing required parameter gatewayTopology');
+	}
+
+	for(service of gatewayTopology.services) {
+		metrics.axway_apigateway_version		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, 1);
+	}
+	return registry;
+}
+
+
 
 async function processServiceMetricsFromSystemOverview(params, options) {
 	const { systemOverviewMetrics } = params;
 	const { logger } = options;
 	var cache = options.pluginContext.cache;
-	const serviceRegistry = await getRegistry('serviceRegistry');
-	const metrics = serviceRegistry._metrics;
+	const registry = await getRegistry();
+	const metrics = registry._metrics;
 	if (!systemOverviewMetrics) {
 		throw new Error('Missing required parameter systemOverviewMetrics');
 	}
@@ -75,15 +92,15 @@ async function processServiceMetricsFromSystemOverview(params, options) {
 		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.failures, `${metric.gatewayId}#requestFailureCacheKey`, cache, logger));
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#requestExceptionsCacheKey`, cache, logger));
 	}
-	return serviceRegistry;
+	return registry;
 }
 
 async function processServiceMetrics(params, options) {
 	const { serviceMetrics } = params;
 	const { logger } = options;
 	var cache = options.pluginContext.cache;
-	const serviceRegistry = await getRegistry('serviceRegistry');
-	const metrics = serviceRegistry._metrics;
+	const registry = await getRegistry();
+	const metrics = registry._metrics;
 	if (!serviceMetrics) {
 		throw new Error('Missing required parameter serviceMetrics');
 	}
@@ -94,13 +111,14 @@ async function processServiceMetrics(params, options) {
 		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
 	}
-	return serviceRegistry;
+	return registry;
 }
 
 
 module.exports = {
-	mergeRegistries,
 	processServiceMetrics,
 	processSummaryMetrics,
-	processServiceMetricsFromSystemOverview
+	processTopologyInfo,
+	processServiceMetricsFromSystemOverview,
+	getMetrics
 };

@@ -100,13 +100,15 @@
 		},
 		"prometheus-metrics.1": {
 			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
-			"name": "Merge registries",
-			"method": "mergeRegistries",
+			"name": "Get metrics",
+			"method": "getMetrics",
 			"parameters": [
 				{
 					"name": "returnMetrics",
 					"type": "boolean",
-					"value": "true"
+					"value": "true",
+					"metaName": "Return metrics",
+					"metaDescription": "If true, the flow returns the metrics as required by the Prometheus scraper."
 				}
 			],
 			"outputs": {
@@ -114,15 +116,18 @@
 					"routes": [
 						"http.1"
 					],
-					"context": "$.prometheusMetrics"
+					"context": "$.prometheusMetrics",
+					"metaName": "Next"
 				},
 				"error": {
 					"routes": [
 						"http.4"
 					],
-					"context": "$.error"
+					"context": "$.error",
+					"metaName": "Error"
 				}
-			}
+			},
+			"metaMethod": "Get metrics"
 		}
 	}
 }

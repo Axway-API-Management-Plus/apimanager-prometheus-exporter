@@ -3,7 +3,6 @@ const { MockRuntime } = require('@axway/api-builder-test-utils');
 const getPlugin = require('../src');
 const fs = require('fs');
 const client = require('prom-client');
-const metricsRegistries = require('../src/metricsRegistries');
 
 describe('flow-node prometheus-metrics', () => {
 	let plugin;
@@ -117,19 +116,20 @@ describe('flow-node prometheus-metrics', () => {
 		});
 	});
 
-	describe('#mergeRegistries', () => {
-		var registry1 = new client.Registry();
-		var registry2 = new client.Registry();
+	describe('#getMetrics', () => {
+		var registry = new client.Registry();
 
 		// Register some dummy metrics, which can be validated in the merged registry
-		var metric1 = new client.Gauge({registers: [], name: 'registry1_metric', help: 'A sample metric for registry 1'});
-		registry1.registerMetric(metric1);
-		var metric2 = new client.Gauge({registers: [], name: 'registry2_metric', help: 'A sample metric for registry 2'});
-		registry2.registerMetric(metric2);
+		var metric1 = new client.Gauge({registers: [], name: 'registry1_metric', help: 'A sample metric'});
+		registry.registerMetric(metric1);
+		var metric2 = new client.Gauge({registers: [], name: 'registry2_metric', help: 'A sample metric'});
+		registry.registerMetric(metric2);
+		var upMetric = new client.Gauge({registers: [], name: 'up', help: 'A sample metric'});
+		registry.registerMetric(upMetric);
 
-		// Get plugin with some simple test registries
+		// Get plugin with some test registry
 		beforeEach(async () => {
-			plugin = await MockRuntime.loadPlugin(getPlugin, { registries: [ registry1, registry2 ] });
+			plugin = await MockRuntime.loadPlugin(getPlugin, { registry: registry });
 			plugin.setOptions({
 				validateInputs: true,
 				validateOutputs: true
@@ -138,18 +138,42 @@ describe('flow-node prometheus-metrics', () => {
 		});
 
 		it('should merge two registries into one registry', async () => {
-			const { value, output } = await flowNode.mergeRegistries();
-
+			const { value, output } = await flowNode.getMetrics();
+			debugger;
 			expect(value).to.be.instanceOf(client.Registry);
 
 			expect(await value.getSingleMetric('registry1_metric').get()).to.be.a('object');
 			expect(await value.getSingleMetric('registry2_metric').get()).to.be.a('object');
+			expect(await value.getSingleMetric('up').get()).to.be.a('object');
 			expect(output).to.equal('next');
 		});
+	});
 
-		it('should merge two registries into one registry and return the metrics', async () => {
-			const { value, output } = await flowNode.mergeRegistries( { returnMetrics: true });
-			expect(value).to.equal(fs.readFileSync('./test/testFiles/Service/ExpectedPrometheusMetrics.txt', {encoding: 'UTF-8'} ));
+	describe('#processTopologyInfo', () => {
+		it('should error when missing required parameter', async () => {
+			// Disable automatic input validation (we want the action to handle this)
+			plugin.setOptions({ validateInputs: false });
+
+			const { value, output } = await flowNode.processTopologyInfo({
+				gatewayTopology: null
+			});
+
+			expect(value).to.be.instanceOf(Error)
+				.and.to.have.property('message', 'Missing required parameter gatewayTopology');
+			expect(output).to.equal('error');
+		});
+
+		it('should update the service registry based on the given topology', async () => {
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/Topology/testTopology.json'), null);
+			const { value, output } = await flowNode.processTopologyInfo({ gatewayTopology: testTopology });
+
+			expect(value).to.be.instanceOf(client.Registry);
+			
+			var versionInfo = await value.getSingleMetric('axway_apigateway_version').get();
+			debugger;
+			expect(versionInfo.type).to.equal('gauge');
+			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected
+			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 			expect(output).to.equal('next');
 		});
 	});
