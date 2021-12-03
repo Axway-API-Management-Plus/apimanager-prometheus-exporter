@@ -3,7 +3,7 @@ const server = new APIBuilder();
 const promBundle = require("express-prom-bundle");
 debugger;
 const metricsMiddleware = promBundle({
-	includeMethod: true, metricsPath: '/api/my/metrics',
+	includeMethod: true, metricsPath: '/api/prom/metrics',
 	includePath: true, 
 	includeStatusCode: true, 
 	includeUp: true,
