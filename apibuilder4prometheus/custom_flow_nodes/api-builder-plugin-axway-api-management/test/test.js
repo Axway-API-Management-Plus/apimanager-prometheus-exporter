@@ -179,7 +179,7 @@ describe('Tests', () => {
 				.and.to.have.property('message', 'Missing required parameter: topology');
 		});
 
-		it.only('should return the Summary-Metrics for all Test-API-Gateway instances as an array', async () => {
+		it('should return the Summary-Metrics for all Test-API-Gateway instances as an array', async () => {
 			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-1/api/monitoring/metrics/summary').replyWithFile(200, './test/testReplies/anm/metrics/Summary/SummaryMetricResponse-1.json');
 			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-2/api/monitoring/metrics/summary').replyWithFile(200, './test/testReplies/anm/metrics/Summary/SummaryMetricResponse-2.json');
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);

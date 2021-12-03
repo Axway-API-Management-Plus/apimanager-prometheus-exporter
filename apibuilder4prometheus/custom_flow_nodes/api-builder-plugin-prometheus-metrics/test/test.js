@@ -52,7 +52,7 @@ describe('flow-node prometheus-metrics', () => {
 			const { value, output } = await flowNode.processSummaryMetrics({ summaryMetrics: testMetrics });
 			expect(value).to.be.instanceOf(client.Registry);
 			// Check some of the returned metrics
-			var instanceCPUMetric = await value.getSingleMetric('gateway_instance_cpu').get();
+			var instanceCPUMetric = await value.getSingleMetric('axway_apigateway_instance_cpu').get();
 			expect(instanceCPUMetric.type).to.equal('gauge');
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
@@ -60,10 +60,10 @@ describe('flow-node prometheus-metrics', () => {
 					{ labels: { gatewayId: 'instance-1'}, value: 0 },
 					{ labels: { gatewayId: 'instance-2'}, value: 1 }
 				]);
-			expect(await value.getSingleMetric('gateway_instance_disk_used').get()).to.be.a('object');
+			expect(await value.getSingleMetric('axway_apigateway_instance_disk_used').get()).to.be.a('object');
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
-			var diskUsed = await value.getSingleMetric('gateway_instance_disk_used').get();
-			var minMemory = await value.getSingleMetric('gateway_instance_memory_min').get();
+			var diskUsed = await value.getSingleMetric('axway_apigateway_instance_disk_used').get();
+			var minMemory = await value.getSingleMetric('axway_apigateway_instance_memory_min').get();
 			
 			expect(diskUsed.values).to.lengthOf(2); 
 			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 26 });
@@ -95,10 +95,10 @@ describe('flow-node prometheus-metrics', () => {
 
 			expect(value).to.be.instanceOf(client.Registry);
 			
-			var apiRequestsTotal = await value.getSingleMetric('api_requests_total').get();
-			var apiRequestsSuccess = await value.getSingleMetric('api_requests_success').get();
-			var apiRequestsFailure = await value.getSingleMetric('api_requests_failures').get();
-			var apiRequestsExceptions = await value.getSingleMetric('api_requests_exceptions').get();
+			var apiRequestsTotal = await value.getSingleMetric('axway_api_requests_total').get();
+			var apiRequestsSuccess = await value.getSingleMetric('axway_api_requests_success').get();
+			var apiRequestsFailure = await value.getSingleMetric('axway_api_requests_failures').get();
+			var apiRequestsExceptions = await value.getSingleMetric('axway_api_requests_exceptions').get();
 			
 			expect(apiRequestsTotal.type).to.equal('counter');
 			expect(apiRequestsTotal.values).to.lengthOf(4); // 4 Metrics are expected

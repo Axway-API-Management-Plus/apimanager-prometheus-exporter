@@ -43,19 +43,19 @@ async function processSummaryMetrics(params, options) {
 	}
 
 	for(metric of summaryMetrics) {
-		metrics.gateway_instance_disk_used		.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
-		metrics.gateway_instance_cpu			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
-		metrics.gateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
-		metrics.gateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
-		metrics.gateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);
-		metrics.gateway_system_cpu_avg			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
-		metrics.gateway_system_cpu_min			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMin);
-		metrics.gateway_system_cpu_max			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMax);
-		metrics.gateway_instance_memory_min		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMin);
-		metrics.gateway_instance_memory_max		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMax);
-		metrics.gateway_instance_memory_avg		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg);
-		metrics.gateway_system_memory			.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed);
-		metrics.gateway_system_memory_total		.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal);
+		metrics.axway_apigateway_instance_disk_used		.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
+		metrics.axway_apigateway_instance_cpu			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
+		metrics.axway_apigateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
+		metrics.axway_apigateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
+		metrics.axway_apigateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);
+		metrics.axway_apigateway_system_cpu_avg			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
+		metrics.axway_apigateway_system_cpu_min			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMin);
+		metrics.axway_apigateway_system_cpu_max			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMax);
+		metrics.axway_apigateway_instance_memory_min		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMin);
+		metrics.axway_apigateway_instance_memory_max		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMax);
+		metrics.axway_apigateway_instance_memory_avg		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg);
+		metrics.axway_apigateway_system_memory			.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed);
+		metrics.axway_apigateway_system_memory_total		.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal);
 	}
 	return systemOverviewRegistry;
 }
@@ -71,9 +71,9 @@ async function processServiceMetricsFromSystemOverview(params, options) {
 	}
 	logger.info(`Processing: ${systemOverviewMetrics.length} service metrics.`);
 	for(metric of systemOverviewMetrics) {
-		metrics.api_requests_success	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.successes, `${metric.gatewayId}#requestSuccessCacheKey`, cache, logger));
-		metrics.api_requests_failures	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.failures, `${metric.gatewayId}#requestFailureCacheKey`, cache, logger));
-		metrics.api_requests_exceptions	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#requestExceptionsCacheKey`, cache, logger));
+		metrics.axway_api_requests_success	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.successes, `${metric.gatewayId}#requestSuccessCacheKey`, cache, logger));
+		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.failures, `${metric.gatewayId}#requestFailureCacheKey`, cache, logger));
+		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#requestExceptionsCacheKey`, cache, logger));
 	}
 	return serviceRegistry;
 }
@@ -89,10 +89,10 @@ async function processServiceMetrics(params, options) {
 	}
 	logger.info(`Processing: ${serviceMetrics.length} service metrics.`);
 	for(metric of serviceMetrics) {
-		metrics.api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.numMessages );
-		metrics.api_requests_success	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.successes );
-		metrics.api_requests_failures	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
-		metrics.api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
+		metrics.axway_api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.numMessages );
+		metrics.axway_api_requests_success	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.successes );
+		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
+		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
 	}
 	return serviceRegistry;
 }
