@@ -38,15 +38,15 @@ describe('flow-node prometheus-metrics', () => {
 			plugin.setOptions({ validateInputs: false });
 
 			const { value, output } = await flowNode.processSummaryMetrics({
-				systemOverviewMetrics: null
+				summaryMetrics: null
 			});
 
 			expect(value).to.be.instanceOf(Error)
-				.and.to.have.property('message', 'Missing required parameter systemOverviewMetrics');
+				.and.to.have.property('message', 'Missing required parameter summaryMetrics');
 			expect(output).to.equal('error');
 		});
 
-		it.only('should collect all SystemOverview metrics from the given summary metrics', async () => {
+		it('should collect all SystemOverview metrics from the given summary metrics', async () => {
 			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Summary/1_SummaryTestMetrics.json'), null);
 			
 			const { value, output } = await flowNode.processSummaryMetrics({ summaryMetrics: testMetrics });
@@ -57,8 +57,8 @@ describe('flow-node prometheus-metrics', () => {
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
 				[ 
-					{ labels: { instance: 'instance-1'}, value: 0 },
-					{ labels: { instance: 'instance-2'}, value: 1 }
+					{ labels: { gatewayId: 'instance-1'}, value: 0 },
+					{ labels: { gatewayId: 'instance-2'}, value: 1 }
 				]);
 			expect(await value.getSingleMetric('gateway_instance_disk_used').get()).to.be.a('object');
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
@@ -66,11 +66,11 @@ describe('flow-node prometheus-metrics', () => {
 			var minMemory = await value.getSingleMetric('gateway_instance_memory_min').get();
 			
 			expect(diskUsed.values).to.lengthOf(2); 
-			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1'}, value: 26 });
-			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'instance': 'instance-2'}, value: 55 });
+			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 26 });
+			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 55 });
 			expect(minMemory.values).to.lengthOf(2); 
-			expect(minMemory.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1'}, value: 956784 });
-			expect(minMemory.values[1]).to.deep.equal( { labels: { 'instance': 'instance-2'}, value: 1441080 });
+			expect(minMemory.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 956784 });
+			expect(minMemory.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 1441080 });
 			expect(output).to.equal('next');
 		});
 	});
@@ -102,17 +102,17 @@ describe('flow-node prometheus-metrics', () => {
 			
 			expect(apiRequestsTotal.type).to.equal('counter');
 			expect(apiRequestsTotal.values).to.lengthOf(4); // 4 Metrics are expected
-			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 2078 });
-			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 30 });
-			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Greeting API"}, value: 1 });
+			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 2078 });
+			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 30 });
+			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 1 });
 
-			expect(apiRequestsSuccess.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 888 });
-			expect(apiRequestsFailure.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 4 });
-			expect(apiRequestsExceptions.values[1]).to.deep.equal( { labels: { 'instance': 'instance-1', "service": "Petstore"}, value: 1 });
+			expect(apiRequestsSuccess.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Petstore"}, value: 888 });
+			expect(apiRequestsFailure.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Petstore"}, value: 4 });
+			expect(apiRequestsExceptions.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Petstore"}, value: 1 });
 
-			expect(apiRequestsSuccess.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 6 });
-			expect(apiRequestsFailure.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
-			expect(apiRequestsExceptions.values[2]).to.deep.equal( { labels: { 'instance': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
+			expect(apiRequestsSuccess.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 6 });
+			expect(apiRequestsFailure.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
+			expect(apiRequestsExceptions.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
 			expect(output).to.equal('next');
 		});
 	});

@@ -1,7 +1,7 @@
 const APIBuilder = require('@axway/api-builder-runtime');
 const server = new APIBuilder();
 const promBundle = require("express-prom-bundle");
-debugger;
+
 const metricsMiddleware = promBundle({
 	includeMethod: true, metricsPath: '/api/prom/metrics',
 	includePath: true, 
