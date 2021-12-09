@@ -21,7 +21,6 @@ const { getRegistry } = require( './metricsRegistry' );
  *	 does not define "next", the first defined output).
  */
  async function getMetrics(params, options) {
-	debugger;
 	const { returnMetrics } = params;
 	const registry = await getRegistry();
 	registry._metrics.up.set({  }, 1);
@@ -60,7 +59,6 @@ async function processSummaryMetrics(params, options) {
 }
 
 async function processTopologyInfo(params, options) {
-	debugger;
 	const { gatewayTopology } = params;
 	const { logger } = options;
 	const registry = await getRegistry();
