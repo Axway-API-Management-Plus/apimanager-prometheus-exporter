@@ -11,6 +11,8 @@ async function createRegistry(pluginConfig, logger) {
         logger.info('Prometheus Metrics-Registry already created.');
         return client.register;
     } else {
+        logger.info(`client.register._metrics: ${JSON.stringify(client.register._metrics)}`);
+        logger.info('Creating new Prometheus Metrics-Registry.');
         new client.Registry();
         new client.Gauge({ name: 'axway_apigateway_version',       help: 'Version information about the API-Gateway', labelNames: ['gatewayId', 'version', 'image']});
         new client.Gauge({ name: 'up',                             help: 'up 1 = up, 0 = not up', labelNames: ['gatewayId']});
