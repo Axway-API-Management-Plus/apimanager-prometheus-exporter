@@ -39,18 +39,19 @@ async function createRegistry(pluginConfig, logger) {
         new client.Histogram({ name: 'axway_api_requests_duration_max', help: 'The maximum API-Request duration', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'] });
         new client.Histogram({ name: 'axway_api_requests_duration_min', help: 'The minimum API-Request duration', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'] });
 
-        logger.info('Prometheus Metrics-Registries successfully created.');
+        logger.info('Prometheus Metrics-Registry successfully created.');
     }
     return client.register;
 }
 
 async function getRegistry() {
     if(testRegistry && Object.keys(testRegistry._metrics).length>0) {
-        debugger;
         console.log(`Using provided test registry.`);
         return testRegistry;
     }
-    return client.register;
+    //if(Object.keys(client.register._metrics).length>0) {
+        return client.register;
+    //}
 }
 
 module.exports = {

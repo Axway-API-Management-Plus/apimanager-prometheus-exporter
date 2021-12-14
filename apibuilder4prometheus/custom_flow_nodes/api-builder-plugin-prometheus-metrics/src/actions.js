@@ -74,8 +74,6 @@ async function processTopologyInfo(params, options) {
 	return registry;
 }
 
-
-
 async function processServiceMetricsFromSystemOverview(params, options) {
 	const { systemOverviewMetrics } = params;
 	const { logger } = options;
