@@ -1,47 +1,55 @@
 const client = require('prom-client');
 
-var registry;
+var testRegistry;
 
 async function createRegistry(pluginConfig, logger) {
     if(pluginConfig.registry) {
-        registry = pluginConfig.registry;
+        logger.info('Using provided test registry.');
+        testRegistry = pluginConfig.registry;
+        return testRegistry;
+    } else if(client.register._metrics.axway_apigateway_version) {
         logger.info('Prometheus Metrics-Registry already created.');
+        return client.register;
     } else {
-        registry = new client.Registry();
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_version',       'Version information about the API-Gateway', ['gatewayId', 'version', 'image']);
-        createAndRegisterMetric(client.Gauge, 'up',                             'up 1 = up, 0 = not up', ['gatewayId']);
+        new client.Registry();
+        new client.Gauge({ name: 'axway_apigateway_version',       help: 'Version information about the API-Gateway', labelNames: ['gatewayId', 'version', 'image']});
+        new client.Gauge({ name: 'up',                             help: 'up 1 = up, 0 = not up', labelNames: ['gatewayId']});
 
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_disk_used',     'Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR)', ['gatewayId']);
-        createAndRegisterMetric( client.Gauge, 'axway_apigateway_instance_cpu',           'Percentage of current process CPU usage (total usage divided by the number of cores', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_cpu_avg',       'Average CPU usage per instance in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_cpu_min',       'Min CPU usage per instance in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_cpu_max',       'Max CPU usage per instance in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_system_cpu_avg',         'Average CPU usage on the system in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_system_cpu_min',         'Min CPU usage on the system in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_system_cpu_max',         'Max CPU usage on the system in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_memory_avg',    'Avg Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_memory_min',    'Min Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_instance_memory_max',    'Max Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_system_memory',          'System memory used (in KB)', ['gatewayId']);
-        createAndRegisterMetric(client.Gauge, 'axway_apigateway_system_memory_total',    'System total memory size (in KB).', ['gatewayId']);
+        new client.Gauge({ name: 'axway_apigateway_instance_disk_used',     help: 'Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR)', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_cpu',           help: 'Percentage of current process CPU usage (total usage divided by the number of cores', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_cpu_avg',       help: 'Average CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_cpu_min',       help: 'Min CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_cpu_max',       help: 'Max CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_cpu_avg',         help: 'Average CPU usage on the system in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_cpu_min',         help: 'Min CPU usage on the system in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_cpu_max',         help: 'Max CPU usage on the system in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_memory_avg',    help: 'Avg Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_memory_min',    help: 'Min Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_memory_max',    help: 'Max Memory used by the API-Gateway instance JVM (in KB) in a 10 minutes time range', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_memory',          help: 'System memory used (in KB)', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_memory_total',    help: 'System total memory size (in KB).', labelNames: ['gatewayId']});
     
-        createAndRegisterMetric(client.Counter, 'axway_api_requests_total',          'The total number of API-Requests', ['gatewayId', 'service']);
-        createAndRegisterMetric(client.Counter, 'axway_api_requests_success',        'The total number of successful API-Requests', ['gatewayId', 'service']);
-        createAndRegisterMetric(client.Counter, 'axway_api_requests_failures',       'The total number of failure API-Requests', ['gatewayId', 'service']);
-        createAndRegisterMetric(client.Counter, 'axway_api_requests_exceptions',     'The total number of exception API-Requests', ['gatewayId', 'service']);
-    
+        new client.Counter({ name: 'axway_api_requests_total',          help: 'The total number of API-Requests', labelNames: ['gatewayId', 'service']});
+        new client.Counter({ name: 'axway_api_requests_success',        help: 'The total number of successful API-Requests', labelNames: ['gatewayId', 'service']});
+        new client.Counter({ name: 'axway_api_requests_failures',       help: 'The total number of failure API-Requests', labelNames: ['gatewayId', 'service']});
+        new client.Counter({ name: 'axway_api_requests_exceptions',     help: 'The total number of exception API-Requests', labelNames: ['gatewayId', 'service']});
+
+        new client.Histogram({ name: 'axway_api_requests_duration_avg', help: 'The average API-Request duration', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'] });
+        new client.Histogram({ name: 'axway_api_requests_duration_max', help: 'The maximum API-Request duration', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'] });
+        new client.Histogram({ name: 'axway_api_requests_duration_min', help: 'The minimum API-Request duration', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'] });
+
         logger.info('Prometheus Metrics-Registries successfully created.');
     }
-    return registry;
+    return client.register;
 }
 
-async function getRegistry(name, logger) {
-    return registry;
-}
-
-function createAndRegisterMetric(metricType, name, help, labelNames) {
-    const metric		= new metricType({ registers: [], name: name, help: help,	labelNames: labelNames });
-    registry.registerMetric(metric);
+async function getRegistry() {
+    if(testRegistry && Object.keys(testRegistry._metrics).length>0) {
+        debugger;
+        console.log(`Using provided test registry.`);
+        return testRegistry;
+    }
+    return client.register;
 }
 
 module.exports = {

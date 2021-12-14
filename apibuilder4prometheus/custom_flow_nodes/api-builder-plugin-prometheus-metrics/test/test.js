@@ -117,19 +117,20 @@ describe('flow-node prometheus-metrics', () => {
 	});
 
 	describe('#getMetrics', () => {
-		var registry = new client.Registry();
+		var testRegistry = new client.Registry();
 
 		// Register some dummy metrics, which can be validated in the merged registry
 		var metric1 = new client.Gauge({registers: [], name: 'registry1_metric', help: 'A sample metric'});
-		registry.registerMetric(metric1);
+		testRegistry.registerMetric(metric1);
 		var metric2 = new client.Gauge({registers: [], name: 'registry2_metric', help: 'A sample metric'});
-		registry.registerMetric(metric2);
+		testRegistry.registerMetric(metric2);
 		var upMetric = new client.Gauge({registers: [], name: 'up', help: 'A sample metric'});
-		registry.registerMetric(upMetric);
+		testRegistry.registerMetric(upMetric);
 
-		// Get plugin with some test registry
+		// Get plugin with a test registry
 		beforeEach(async () => {
-			plugin = await MockRuntime.loadPlugin(getPlugin, { registry: registry });
+			debugger;
+			plugin = await MockRuntime.loadPlugin(getPlugin, { registry: testRegistry });
 			plugin.setOptions({
 				validateInputs: true,
 				validateOutputs: true
@@ -137,9 +138,12 @@ describe('flow-node prometheus-metrics', () => {
 			flowNode = plugin.getFlowNode('prometheus-metrics');
 		});
 
-		it('should merge two registries into one registry', async () => {
+		after(async () => {
+			testRegistry.clear();
+		});
+
+		it('should return the metrics', async () => {
 			const { value, output } = await flowNode.getMetrics();
-			debugger;
 			expect(value).to.be.instanceOf(client.Registry);
 
 			expect(await value.getSingleMetric('registry1_metric').get()).to.be.a('object');
@@ -170,7 +174,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(value).to.be.instanceOf(client.Registry);
 			
 			var versionInfo = await value.getSingleMetric('axway_apigateway_version').get();
-			debugger;
+
 			expect(versionInfo.type).to.equal('gauge');
 			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected
 			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });

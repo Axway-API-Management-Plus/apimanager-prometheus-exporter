@@ -61,6 +61,7 @@ async function processSummaryMetrics(params, options) {
 async function processTopologyInfo(params, options) {
 	const { gatewayTopology } = params;
 	const { logger } = options;
+	debugger;
 	const registry = await getRegistry();
 	const metrics = registry._metrics;
 	if (!gatewayTopology) {
@@ -104,10 +105,33 @@ async function processServiceMetrics(params, options) {
 	}
 	logger.info(`Processing: ${serviceMetrics.length} service metrics.`);
 	for(metric of serviceMetrics) {
+		logger.info(`Processing service metrics for service: ${metric.name} on gateway: ${metric.gatewayId}`);
 		metrics.axway_api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.numMessages );
-		metrics.axway_api_requests_success	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.successes );
-		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
+		metrics.axway_api_requests_success		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.successes );
+		metrics.axway_api_requests_failures		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
+		// For all given processing times 
+		var avgProcessed = false;
+		var maxProcessed = false;
+		var minProcessed = false;
+		for(processingTime of metric.processingTimeAvg) {
+			logger.info(`Adding avg ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			metrics.axway_api_requests_duration_avg.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
+			avgProcessed = true;
+		}
+		for(processingTime of metric.processingTimeMax) {
+			logger.info(`Adding max ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			metrics.axway_api_requests_duration_max.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
+			maxProcessed = true;
+		}
+		for(processingTime of metric.processingTimeMin) {
+			logger.info(`Adding min ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			metrics.axway_api_requests_duration_min.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
+			minProcessed = true;
+		}
+		if(avgProcessed == false || maxProcessed == false || minProcessed == false) {
+			logger.warn(`Missing timeProcessing time metrics: (avgProcessed: ${avgProcessed}, maxProcessed: ${maxProcessed}, minProcessed: ${minProcessed})`);
+		}
 	}
 	return registry;
 }

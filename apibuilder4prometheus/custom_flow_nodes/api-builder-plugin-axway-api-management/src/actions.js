@@ -143,7 +143,7 @@ async function getTimelineMetrics(params, options) {
 			}
 			metrics = metrics.concat(await _getDataFromTimeline(serviceMetrics, timelineMetrics, lastReadTimestamp, pointEnd, logger));
 		}
-		logger.info(`Successfully created metrics.`);
+		logger.info(`Successfully created/updated metrics.`);
 		cache.set(gwInstanceId, pointEnd)
 	}
 	return metrics;
@@ -155,10 +155,10 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 	for (const [key, serie] of Object.entries(series)) {
 		var serieName = serie.name;
 		if(lastReadTimestamp) {
-			// If we do have a known lastReadTimestamp, read metrics up to that point
+			// If we do have a known lastReadTimestamp, read metrics only up to that point as previous data point have been read before
 			// Get the difference between current timestamp and last read
 			var diff = pointEnd - lastReadTimestamp;
-			if(diff > 600000) { // Difference is bigger than the max range of data 
+			if(diff > 600000) { // Difference is bigger than the max range of data / Perhaps the scraper was not running
 				// Reset it and only read the last data point
 				logger.error(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Unexpected difference: ${diff} between last read timestamp and current data set.`);
 				metrics[serieName] = serie.data[serie.data.length - 1];
@@ -168,19 +168,41 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 			var points2Read = diff/pointInterval;
 			var value = 0;
 			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Reading last ${points2Read} data point for metric ${serieName}`);
+			// Variable just to create a nicer log message
 			var readDataPoints = [];
+			// Iterate over the last datapoints required to read
 			for(var i=1; i<=points2Read; i++) {
-				readDataPoints.push(serie.data[serie.data.length - i]);
-				value = value + serie.data[serie.data.length - i];
+				// For the processingTimes we try to avoid creating an average of an average and record each processing time individually
+				// which will be added later to Histogram buckets
+				if(serie.name.startsWith('processingTime')) {
+					debugger;
+					var avgDataPoint = serie.data[serie.data.length - i];
+					if(!metrics[serieName]) metrics[serieName] = [];
+					metrics[serieName].push(avgDataPoint);
+				} else {
+					readDataPoints.push(serie.data[serie.data.length - i]);
+					// For total values, we calculate the sum of all datapoints
+					value = value + serie.data[serie.data.length - i];
+					metrics[serieName] = value;
+				}
 			}
-			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Calculated ${value} based on last ${points2Read} datapoints: ${JSON.stringify(readDataPoints)}.`);
-			metrics[serieName] = value;
+			if(serie.name.startsWith('processingTime')) {
+				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Collected last ${points2Read} processing time datapoints: ${JSON.stringify(metrics[serieName])}.`);
+			} else {
+				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Calculated ${value} based on last ${points2Read} datapoints: ${JSON.stringify(readDataPoints)}.`);
+			}
 		} else {
 			// If no data has been read previously, only read the last data bucket 
 			// to avoid spikes in the result.
 			// However, this requires, that data is constanly scraped by Prom as they set the timestamp
-			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Using last bucket value: ${serie.data[serie.data.length - 1]}`);
-			metrics[serieName] = serie.data[serie.data.length - 1];
+			if(serie.name.startsWith('processingTime')) {
+				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Using last average bucket value: ${serie.data[serie.data.length - 1]}`);
+				if(!metrics[serieName]) metrics[serieName] = [];
+				metrics[serieName].push(serie.data[serie.data.length - 1]);
+			} else {
+				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Using last bucket value: ${serie.data[serie.data.length - 1]}`);
+				metrics[serieName] = serie.data[serie.data.length - 1];
+			}
 		}
 	}
 	return metrics;
@@ -217,7 +239,7 @@ async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
 		path: `/api/router/service/${instanceId}/api/monitoring/metrics/${metricsResource}`,
 		headers: anmConfig.requestHeaders,
 		agent: new https.Agent({ rejectUnauthorized: false }),
-		timeout: 500
+		timeout: 2000
 	};
 	logger.debug(`Trying to read metrics: '${metricsResource}' from Admin-Node-Manager: ${anmConfig.url}`);
 	var metrics = await sendRequest(anmConfig.url, options)
@@ -226,7 +248,7 @@ async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
 		})
 		.catch(err => {
 			if(err.code == "ECONNRESET") {
-				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Request timed out. Perhaps instance is down.`);
+				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Request timed out (ECONNRESET). Perhaps instance is down.`);
 				logger.debug(`Error message: ${JSON.stringify(err)}`);
 				return [];
 			}

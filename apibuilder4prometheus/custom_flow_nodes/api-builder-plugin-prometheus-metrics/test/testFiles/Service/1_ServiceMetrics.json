@@ -6,7 +6,10 @@
     "groupName": "Greeting API",
     "name": "Greeting API",
     "failures": 30,
-    "successes": 2078
+    "successes": 2078,
+    "processingTimeAvg": [101],
+    "processingTimeMin": [16],
+    "processingTimeMax": [179]
   },
   {
     "groupType": "Service",
@@ -15,7 +18,10 @@
     "groupName": "Petstore",
     "name": "Petstore",
     "failures": 4,
-    "successes": 888
+    "successes": 888,
+    "processingTimeAvg": [101],
+    "processingTimeMin": [16],
+    "processingTimeMax": [179]
   },
   {
     "groupType": "Service",
@@ -26,9 +32,9 @@
     "failures": 0,
     "successes": 6,
     "exceptions": 0,
-    "processingTimeAvg": 101,
-    "processingTimeMin": 16,
-    "processingTimeMax": 179,
+    "processingTimeAvg": [101],
+    "processingTimeMin": [16],
+    "processingTimeMax": [179],
     "numMessages": 6
   },
   {
@@ -38,6 +44,9 @@
     "groupName": "EMR-DiagnosticInfo",
     "name": "EMR-DiagnosticInfo",
     "failures": 33,
-    "successes": 333
+    "successes": 333,
+    "processingTimeAvg": [101],
+    "processingTimeMin": [16],
+    "processingTimeMax": [179]
   }
 ]
