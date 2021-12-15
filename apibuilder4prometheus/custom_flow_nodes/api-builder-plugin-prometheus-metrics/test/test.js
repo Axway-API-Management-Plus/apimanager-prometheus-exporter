@@ -98,6 +98,10 @@ describe('flow-node prometheus-metrics', () => {
 			var apiRequestsSuccess = await value.getSingleMetric('axway_api_requests_success').get();
 			var apiRequestsFailure = await value.getSingleMetric('axway_api_requests_failures').get();
 			var apiRequestsExceptions = await value.getSingleMetric('axway_api_requests_exceptions').get();
+			var apiRequestsDurationAvg = await value.getSingleMetric('axway_api_requests_duration_avg').get();
+			var apiRequestsDurationMax = await value.getSingleMetric('axway_api_requests_duration_max').get();
+			var apiRequestsDurationMin = await value.getSingleMetric('axway_api_requests_duration_min').get();
+			
 			
 			expect(apiRequestsTotal.type).to.equal('counter');
 			expect(apiRequestsTotal.values).to.lengthOf(4); // 4 Metrics are expected
@@ -112,6 +116,12 @@ describe('flow-node prometheus-metrics', () => {
 			expect(apiRequestsSuccess.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 6 });
 			expect(apiRequestsFailure.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
 			expect(apiRequestsExceptions.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
+
+			expect(apiRequestsDurationAvg.type).to.equal('histogram');
+			expect(apiRequestsDurationMax.type).to.equal('histogram');
+			expect(apiRequestsDurationMin.type).to.equal('histogram');
+
+			// Check for the Petstore service, has some duration (processingTime) test values
 			expect(output).to.equal('next');
 		});
 	});

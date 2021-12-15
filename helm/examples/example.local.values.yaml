@@ -1,8 +1,9 @@
 global:
-  pullPolicy: IfNotPresent
+  # pullPolicy: Always
+  # imageTag: "latest"
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: 
     # https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/guide/ingress/annotations
     kubernetes.io/ingress.class: alb
@@ -15,11 +16,12 @@ ingress:
     alb.ingress.kubernetes.io/success-codes: "200"
 
   hosts:
-    - host: metrics.axway-apim-on-eks.de
+    - host: metrics.customer.com
       paths:
       - path: /*
 
-anm: 
-  url: https://axway-apim-anm:8090
-  username: admin
-  password: my-password
+config:
+  anm: 
+    url: https://axway-apim-anm:8090
+    username: admin
+    password: my-password
