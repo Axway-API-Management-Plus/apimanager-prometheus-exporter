@@ -113,17 +113,17 @@ async function processServiceMetrics(params, options) {
 		var maxProcessed = false;
 		var minProcessed = false;
 		for(processingTime of metric.processingTimeAvg) {
-			logger.info(`Adding avg ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			logger.info(`Adding ProcessingTimeAvg ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
 			metrics.axway_api_requests_duration_avg.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			avgProcessed = true;
 		}
 		for(processingTime of metric.processingTimeMax) {
-			logger.info(`Adding max ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			logger.info(`Adding ProcessingTimeMax ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
 			metrics.axway_api_requests_duration_max.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			maxProcessed = true;
 		}
 		for(processingTime of metric.processingTimeMin) {
-			logger.info(`Adding min ${processingTime} for gatewayId: ${metric.gatewayId} and service: ${metric.name}`);
+			logger.info(`Adding ProcessingTimeMin datapoint: ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
 			metrics.axway_api_requests_duration_min.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			minProcessed = true;
 		}
@@ -133,7 +133,6 @@ async function processServiceMetrics(params, options) {
 	}
 	return registry;
 }
-
 
 module.exports = {
 	processServiceMetrics,

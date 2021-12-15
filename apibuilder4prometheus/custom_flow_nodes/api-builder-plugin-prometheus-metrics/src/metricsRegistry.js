@@ -49,9 +49,7 @@ async function getRegistry() {
         console.log(`Using provided test registry.`);
         return testRegistry;
     }
-    //if(Object.keys(client.register._metrics).length>0) {
-        return client.register;
-    //}
+    return client.register;
 }
 
 module.exports = {
