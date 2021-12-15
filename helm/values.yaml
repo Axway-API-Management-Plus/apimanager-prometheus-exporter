@@ -1,17 +1,37 @@
 global:
   repository: "cwiechmann"
   image: "apibuilder4prometheus"
-  imageTag: "v0.2.0"
+  # You may override the default image tag
+  imageTag: ""
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
 
   replicas: 1
 
-anm: 
-  url: 
-  username: 
-  password: 
+config: 
+  # Information used to connect to the Admin-Node-Manager
+  anm: 
+    # The ANM-URL (e.g. https://anm.customer.com:8090)
+    url: ""
+    # Username used by the process to collect metric information. Must have permission to call the REST-API: api/monitoring/metrics/...
+    username: ""
+    # Belonging password. You may also use an existing secret that contains the password. See below.
+    password: ""
+    # If an existing secret is provided the config.anm.password is ignored and instead this secret is used
+    existingSecret: ""
+    # The key in the existing secret that contains the required password
+    existingSecretPasswordKey: ""
+
+  # Controls how often the service metrics, such as API request information or processing times should be obtained from the ANM. 
+  # The smaller the interval, the more granular the exposed information is provided, but has higher load for the admin node manager.
+  # The default is every 15 seconds. It makes sense to match this value with the Prometheus scraper interval.
+  pollServiceMetricsInterval: ""
+  # Controls how often the API gateway system metrics, such as CPU or memory usage, should be obtained from the ANM. 
+  # The smaller the interval, the more granular the exposed information is provided, but has higher load for the admin node manager.
+  # The default is every 15 seconds. It makes sense to match this value with the Prometheus scraper interval.
+  pollSummaryMetricsInterval: ""
+  # The Log-Level of the API-Builder process. Defaults to info.
+  logLevel: ""
+
 
 imagePullSecrets: []
 nameOverride: ""
@@ -44,6 +64,7 @@ service:
   port: 8080
 
 ingress:
+  # If enabled, you can access the metrics via this ingress resource (on OpenShift a route is created instead)
   enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
@@ -75,7 +96,7 @@ resources: {}
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 1
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
