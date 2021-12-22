@@ -74,7 +74,6 @@ async function lookupTopology(params, options) {
 async function getMetricsGroups(params, options) {
 	const { topology } = params;
 	const anmConfig = options.pluginConfig.adminNodeManager;
-	cache = options.pluginContext.cache;
 	const { logger } = options;
 	if (!topology) {
 		throw new Error('Missing required parameter: topology');
@@ -86,9 +85,6 @@ async function getMetricsGroups(params, options) {
 		var groups = await _getMetrics('groups', anmConfig, service.id, logger);
 		if(!groups || groups.length==0) {
 			logger.warn(`No metrics groups found for gateway instance: ${service.id}`);
-			
-			const { logger } = options;
-			if(cache.get('ANM_TOPOLOGY')) {
 			continue;
 		}
 		allGatewaysFail = false;
