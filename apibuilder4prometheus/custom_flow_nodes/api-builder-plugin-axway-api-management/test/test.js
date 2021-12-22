@@ -70,10 +70,10 @@ describe('Tests', () => {
 		});
 	});
 
-	describe('#getTimelineMetrics', () => {
-		var serviceMetricTypes = "&metricType=successes&metricType=failures&metricType=exceptions&metricType=numMessages&metricType=processingTimeAvg&metricType=processingTimeMin&metricType=processingTimeMax";
+	describe('#getServiceMetrics', () => {
+		var serviceMetricTypes = "&metricType=successes&metricType=failures&metricType=exceptions&metricType=numMessages&metricType=processingTimeAvg";
 		it('should error when missing parameter topology', async function () {
-			const { value, output } = await flowNode.getTimelineMetrics({ topology: null });
+			const { value, output } = await flowNode.getServiceMetrics({ topology: null });
 
 			expect(output).to.equal('error');
 			expect(value).to.be.instanceOf(Object)
@@ -81,22 +81,14 @@ describe('Tests', () => {
 		});
 
 		it('should error when missing parameter metricsGroups', async function () {
-			const { value, output } = await flowNode.getTimelineMetrics({ topology: {}, metricsGroups: null });
+			const { value, output } = await flowNode.getServiceMetrics({ topology: {}, metricsGroups: null });
 
 			expect(output).to.equal('error');
 			expect(value).to.be.instanceOf(Object)
 				.and.to.have.property('message', 'Missing required parameter: metricsGroups');
 		});
 
-		it('should error when missing parameter metricsType', async function () {
-			const { value, output } = await flowNode.getTimelineMetrics({ topology: {}, metricsGroups: {}, metricsType: null });
-
-			expect(output).to.equal('error');
-			expect(value).to.be.instanceOf(Object)
-				.and.to.have.property('message', 'Missing required parameter: metricsType');
-		});
-
-		it('should result into service metrics based on the timeline metrics', async () => {
+		it('should result into SERVICE-METRICS based on the timeline metrics', async () => {
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
 				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/1_ServiceTimeLine.json');
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Petstore${serviceMetricTypes}`)
@@ -111,18 +103,18 @@ describe('Tests', () => {
 			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
 			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
 			// Initially only the last data point is expected for all series as the cache is not yet populated
-			const { value, output } = await flowNode.getTimelineMetrics({ topology: testTopology, metricsGroups: testGroups, metricsType: 'Service' });
+			const { value, output } = await flowNode.getServiceMetrics({ topology: testTopology, metricsGroups: testGroups });
 			
 			// We expect a simple array of metrics for each API-Gateway-Instance, Service and (later Method)
 			expect(value).to.lengthOf(4); // 4 Service metrics are expected
 			expect(output).to.equal('next');
-			expect(value[0].successes).to.equal(788);
-			expect(value[0].failures).to.equal(5);
-			expect(value[1].successes).to.equal(888);
-			expect(value[1].failures).to.equal(4);
+			expect(value[0].successes).to.deep.equal([788]);
+			expect(value[0].failures).to.deep.equal([5]);
+			expect(value[1].successes).to.deep.equal([888]);
+			expect(value[1].failures).to.deep.equal([4]);
 		});
 
-		it('should result into service metrics based on the timeline metrics', async () => {
+		it('should result into SERVICE-METRICS based on the timeline metrics', async () => {
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
 				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/1_ServiceTimeLine.json');
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Petstore${serviceMetricTypes}`)
@@ -134,27 +126,27 @@ describe('Tests', () => {
 
 			// Simulate there is already a lastTimestampRead for both API-Gateway instances
 			// MockedData calculated pointEnd: 1637752710000 based on pointStart: 1637752110000 (plus 10 minutes)
-			// Simulate lastTimestampRead to force code to read last 5 data points: 1637752710000 - (5000 * 5) = 1637752685000
-			testCache.set("instance-1", "1637752685000");
-			testCache.set("instance-2", "1637752685000");
+			// Set the lastTimestampRead to force code to read last 5 data points: 1637752710000 - (5000 * 5) = 1637752685000
+			testCache.set("instance-1###Service", "1637752685000");
+			testCache.set("instance-2###Service", "1637752685000");
 
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
 			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
 			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
 			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
 			
-			const { value, output } = await flowNode.getTimelineMetrics({ topology: testTopology, metricsGroups: testGroups, metricsType: 'Service' });
+			const { value, output } = await flowNode.getServiceMetrics({ topology: testTopology, metricsGroups: testGroups });
 			
 			// We expect a simple array of metrics for each API-Gateway-Instance, Service and (later Method)
 			expect(value).to.lengthOf(4); // 4 Service metrics are expected
 			expect(output).to.equal('next');
 			
-			expect(value[0].successes).to.equal(2078); // Last 5 datapoints: 788, 533, 355, 400, 2 = 2.078
-			expect(value[0].failures).to.equal(30);
+			expect(value[0].successes).to.deep.equal([ 788, 533, 355, 400, 2 ]); // Last 5 datapoints: 788, 533, 355, 400, 2 = 2.078
+			expect(value[0].failures).to.deep.equal([ 5, 10, 15, 0, 0 ]);
 			expect(value[0].groupName).to.equal('Greeting API');
 			expect(value[0].name).to.equal('Greeting API');
-			expect(value[1].successes).to.equal(888);
-			expect(value[1].failures).to.equal(4);
+			expect(value[1].successes).to.deep.equal([ 888, 0, 0, 0, 0 ]);
+			expect(value[1].failures).to.deep.equal([ 4, 0, 0, 0, 0 ]);
 			expect(value[1].groupName).to.equal('Petstore');
 			expect(value[1].name).to.equal('Petstore');
 			// Mocked Timeline data for Instance-2 contains that information
@@ -170,25 +162,43 @@ describe('Tests', () => {
 		});
 	});
 
-	describe('#getSummaryMetrics', () => { 
+	describe('#getSystemMetrics', () => { 
+		var systemMetricTypes = "&metricType=cpuUsedMax&metricType=systemCpuMax&metricType=memoryUsedMax&metricType=diskUsedPercent&metricType=systemMemoryTotal&metricType=systemMemoryUsed";
 		it('should error when missing parameter topology', async function () {
-			const { value, output } = await flowNode.getSummaryMetrics({ topology: null });
+			const { value, output } = await flowNode.getSystemMetrics({ topology: null });
 
 			expect(output).to.equal('error');
 			expect(value).to.be.instanceOf(Object)
 				.and.to.have.property('message', 'Missing required parameter: topology');
 		});
 
-		it('should return the Summary-Metrics for all Test-API-Gateway instances as an array', async () => {
-			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-1/api/monitoring/metrics/summary').replyWithFile(200, './test/testReplies/anm/metrics/Summary/SummaryMetricResponse-1.json');
-			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-2/api/monitoring/metrics/summary').replyWithFile(200, './test/testReplies/anm/metrics/Summary/SummaryMetricResponse-2.json');
-			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+		it('should error when missing parameter metricsGroups', async function () {
+			const { value, output } = await flowNode.getSystemMetrics({ topology: {}, metricsGroups: null });
 
-			const { value, output } = await flowNode.getSummaryMetrics({ topology: testTopology });
+			expect(output).to.equal('error');
+			expect(value).to.be.instanceOf(Object)
+				.and.to.have.property('message', 'Missing required parameter: metricsGroups');
+		});
+
+		it('should return the SYSTEM-METRICS for all Test-API-Gateway instances as an array', async () => {
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=SystemOverview&name=System%20overview${systemMetricTypes}`)
+				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/5_SystemTimeLine.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-2/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=SystemOverview&name=System%20overview${systemMetricTypes}`)
+				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/6_SystemTimeLine.json');
+
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
+			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
+
+			const { value, output } = await flowNode.getSystemMetrics({ topology: testTopology, metricsGroups: testGroups });
+
+			//console.log(JSON.stringify(value));
 			
 			expect(value).to.lengthOf(2);
 			expect(value[0].gatewayId).to.equal('instance-1');
 			expect(value[0].groupType).to.equal('SystemOverview');
+			expect(value[0].cpuUsedMax).to.deep.equal([2]);
 			
 			expect(value[1].gatewayId).to.equal('instance-2');
 			expect(value[1].groupType).to.equal('SystemOverview');

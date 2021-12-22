@@ -1,0 +1,52 @@
+[
+    {
+      "groupType": "SystemOverview",
+      "gatewayName": "instance-1",
+      "gatewayId": "instance-1",
+      "groupName": "System overview",
+      "name": "System overview",
+      "cpuUsedMax": [
+        3, 4, 5
+      ],
+      "systemCpuMax": [
+        6, 8, 10
+      ],
+      "memoryUsedMax": [
+        1015604, 1025704, 1035504
+      ],
+      "diskUsedPercent": [
+        23, 24
+      ],
+      "systemMemoryUsed": [
+        30766228, 30766224, 30766225
+      ],
+      "systemMemoryTotal": [
+        32410868, 30766234, 30766235
+      ]
+    },
+    {
+      "groupType": "SystemOverview",
+      "gatewayName": "instance-2",
+      "gatewayId": "instance-2",
+      "groupName": "System overview",
+      "name": "System overview",
+      "cpuUsedMax": [
+        1,2,3
+      ],
+      "systemCpuMax": [
+        9
+      ],
+      "memoryUsedMax": [
+        1015604
+      ],
+      "diskUsedPercent": [
+        26
+      ],
+      "systemMemoryUsed": [
+        30096188
+      ],
+      "systemMemoryTotal": [
+        32410868
+      ]
+    }
+  ]

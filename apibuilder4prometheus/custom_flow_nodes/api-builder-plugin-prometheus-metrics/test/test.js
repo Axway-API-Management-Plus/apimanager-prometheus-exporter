@@ -31,24 +31,23 @@ describe('flow-node prometheus-metrics', () => {
 		});
 	});
 
-	describe('#processSummaryMetrics', () => {
+	describe('#processSystemMetrics', () => {
 		it('should error when missing required parameter', async () => {
-			// Disable automatic input validation (we want the action to handle this)
 			plugin.setOptions({ validateInputs: false });
 
-			const { value, output } = await flowNode.processSummaryMetrics({
-				summaryMetrics: null
+			const { value, output } = await flowNode.processSystemMetrics({
+				systemMetrics: null
 			});
 
 			expect(value).to.be.instanceOf(Error)
-				.and.to.have.property('message', 'Missing required parameter summaryMetrics');
+				.and.to.have.property('message', 'Missing required parameter systemMetrics');
 			expect(output).to.equal('error');
 		});
 
-		it('should collect all SystemOverview metrics from the given summary metrics', async () => {
-			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/Summary/1_SummaryTestMetrics.json'), null);
+		it('should collect all System metrics from the given system metrics', async () => {
+			var testMetrics = JSON.parse(fs.readFileSync('./test/testFiles/System/1_SystemMetrics.json'), null);
 			
-			const { value, output } = await flowNode.processSummaryMetrics({ summaryMetrics: testMetrics });
+			const { value, output } = await flowNode.processSystemMetrics({ systemMetrics: testMetrics });
 			expect(value).to.be.instanceOf(client.Registry);
 			// Check some of the returned metrics
 			var instanceCPUMetric = await value.getSingleMetric('axway_apigateway_instance_cpu_ratio').get();
@@ -57,13 +56,13 @@ describe('flow-node prometheus-metrics', () => {
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
 				[ 
-					{ labels: { gatewayId: 'instance-1'}, value: 0 },
-					{ labels: { gatewayId: 'instance-2'}, value: 1 }
+					{ labels: { gatewayId: 'instance-1'}, value: 4 },
+					{ labels: { gatewayId: 'instance-2'}, value: 2 }
 				]);
 			expect(systemCPUMetric.values).to.deep.equal(
 					[ 
-						{ labels: { gatewayId: 'instance-1'}, value: 51 },
-						{ labels: { gatewayId: 'instance-2'}, value: 85 }
+						{ labels: { gatewayId: 'instance-1'}, value: 8 },
+						{ labels: { gatewayId: 'instance-2'}, value: 9 }
 					]);
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
 			var diskUsed = await value.getSingleMetric('axway_apigateway_instance_disk_used_ratio').get();
@@ -73,17 +72,17 @@ describe('flow-node prometheus-metrics', () => {
 
 			expect(diskUsed).to.be.a('object');
 			expect(diskUsed.values).to.lengthOf(2); 
-			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 26 });
-			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 55 });
+			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 24 });
+			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 26 });
 			expect(memUsed.values).to.lengthOf(2); 
-			expect(memUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 959129000 });
-			expect(memUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 1441080000 });
+			expect(memUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 1025604000 });
+			expect(memUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 1015604000 });
 			expect(systemMemTotal.values).to.lengthOf(2); 
-			expect(systemMemTotal.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 32464408000 });
-			expect(systemMemTotal.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 16266504000 });
+			expect(systemMemTotal.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 31314446000 });
+			expect(systemMemTotal.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 32410868000 });
 			expect(systemMemUsed.values).to.lengthOf(2); 
-			expect(systemMemUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 32145900000 });
-			expect(systemMemUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 15510580000 });
+			expect(systemMemUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 30766226000 });
+			expect(systemMemUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 30096188000 });
 			expect(output).to.equal('next');
 		});
 	});
@@ -121,7 +120,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(apiRequestsTotal.values).to.lengthOf(4); // 4 Metrics are expected
 			expect(apiRequestsSuccess.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 2078 });
 			expect(apiRequestsFailure.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 30 });
-			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 1 });
+			expect(apiRequestsExceptions.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Greeting API"}, value: 0 });
 
 			expect(apiRequestsSuccess.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Petstore"}, value: 888 });
 			expect(apiRequestsFailure.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-1', "service": "Petstore"}, value: 4 });
@@ -153,7 +152,6 @@ describe('flow-node prometheus-metrics', () => {
 
 		// Get plugin with a test registry
 		beforeEach(async () => {
-			debugger;
 			plugin = await MockRuntime.loadPlugin(getPlugin, { registry: testRegistry });
 			plugin.setOptions({
 				validateInputs: true,

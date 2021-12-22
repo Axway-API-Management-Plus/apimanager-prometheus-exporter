@@ -30,46 +30,21 @@ flow-nodes:
             properties:
               message:
                 type: string
-      processSummaryMetrics: 
-        name: Process summary metrics
-        description: Processes the given summary metrics. Currently it is used to extract system overview information to update the System Prometheus-Metrics registry.
-        parameters:
-          summaryMetrics:
-            name: Summary metrics
-            description: Array of summary metrics
-            required: true
-            schema:
-              type: array
-        returns:
-          name: Next
-          description: The SystemOverview Metrics-Registry
-          context: $.systemOverviewMetricsRegistry
-          schema:
-            type: object
-        throws:
-          name: Error
-          description: An unexpected error was encountered.
-          context: $.error
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
 
-      processServiceMetricsFromSystemOverview: 
-        name: Service metrics from SystemOverview
-        description: Gets the Service information summary from SystemOverview due to https://support.axway.com/en/case-global/view/id/01314580
+      processSystemMetrics: 
+        name: Process system metrics
+        description: Processes the given system metrics.
         parameters:
-          systemOverviewMetrics:
-            name: System overview metrics
-            description: System overview metrics collected from the ANM.
+          systemMetrics:
+            name: System metrics
+            description: Array of system metrics for each API-Gateway instance
             required: true
             schema:
               type: array
         returns:
           name: Next
-          description: The Service Metrics-Registry
-          context: $.serviceMetricsRegistry
+          description: The System Metrics-Registry
+          context: $.systemOverviewMetricsRegistry
           schema:
             type: object
         throws:

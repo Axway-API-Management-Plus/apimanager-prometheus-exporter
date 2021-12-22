@@ -46,22 +46,10 @@ flow-nodes:
             schema:
               type: object
 
-      getTimelineMetrics:
-        name: Get timeline metrics
-        description: "Gets timeline metrics from ANM and returns the generated metrics object"
+      getServiceMetrics:
+        name: Get service metrics
+        description: "Gets service metrics from ANM and returns the generated metrics object"
         parameters:
-          metricsType:
-            name: Metrics type
-            description: The type of metrics to collect
-            required: true
-            initialType: string
-            schema:
-              type: string
-              enum:
-                - SystemOverview
-                - Service
-                - Client
-                - TargetServer
           metricsGroups:
             name: Metrics groups
             description: The collected Metrics-Groups for all API-Gateways
@@ -88,10 +76,16 @@ flow-nodes:
             schema:
               type: object
 
-      getSummaryMetrics:
-        name: Get summary metrics
-        description: "Returns the summary metrics information provided by the monitoring/metrics/summary endpoint. The information is retrieved for each API gateway instance and returned as an array."
+      getSystemMetrics:
+        name: Get system metrics
+        description: "Gets system metrics from ANM and returns the generated metrics object"
         parameters:
+          metricsGroups:
+            name: Metrics groups
+            description: The collected Metrics-Groups for all API-Gateways
+            required: true
+            schema:
+              type: object
           topology:
             name: Topology
             description: The topology object, which is used to iterate over all API-Gateway instances.
@@ -101,8 +95,8 @@ flow-nodes:
         outputs:
           next:
             name: Next
-            description: Summary metrics array for all API-Gateway instances.
-            context: $.summaryMetrics
+            description: Metrics
+            context: $.metrics
             schema:
               type: array
           error:

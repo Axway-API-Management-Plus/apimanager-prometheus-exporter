@@ -31,30 +31,27 @@ const { getRegistry } = require( './metricsRegistry' );
 	}
 }
 
-async function processSummaryMetrics(params, options) {
-	const { summaryMetrics } = params;
+async function processSystemMetrics(params, options) {
+	const { systemMetrics } = params;
 	const { logger } = options;
 	const registry = await getRegistry();
 	const metrics = registry._metrics;
-	if (!summaryMetrics) {
-		throw new Error('Missing required parameter summaryMetrics');
+	if (!systemMetrics) {
+		throw new Error('Missing required parameter systemMetrics');
 	}
-	for(metric of summaryMetrics) {
-		metrics.axway_apigateway_instance_disk_used_ratio	.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
-		metrics.axway_apigateway_instance_cpu_ratio			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
-		metrics.axway_apigateway_system_cpu_ratio			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
-		//metrics.axway_apigateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
-		//metrics.axway_apigateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
-		//metrics.axway_apigateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);
-		//metrics.axway_apigateway_system_cpu_avg			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
-		//metrics.axway_apigateway_system_cpu_min			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMin);
-		//metrics.axway_apigateway_system_cpu_max			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMax);
-		//metrics.axway_apigateway_instance_memory_min		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMin);
-		//metrics.axway_apigateway_instance_memory_max		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMax);
-		//metrics.axway_apigateway_instance_memory_avg		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg);
-		metrics.axway_apigateway_memory_used_bytes			.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg*1000);
-		metrics.axway_apigateway_system_memory_total_bytes	.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal*1000);
-		metrics.axway_apigateway_system_memory_used_bytes	.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed*1000);
+	for(metric of systemMetrics) {
+		/**
+		 * We use the average here because we get different numbers of data points depending on the ANM poll speed and, 
+		 * of course, only one value can be stored in the prom registry at a time. 
+		 * The more often polling is done (both API Builder --> ANM & Prom-Scraper --> API Builder) the more accurate the data will be.
+		 */
+		debugger;
+		metrics.axway_apigateway_instance_disk_used_ratio	.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.diskUsedPercent));
+		metrics.axway_apigateway_instance_cpu_ratio			.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.cpuUsedMax));
+		metrics.axway_apigateway_system_cpu_ratio			.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.systemCpuMax));
+		metrics.axway_apigateway_memory_used_bytes			.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.memoryUsedMax)*1000);
+		metrics.axway_apigateway_system_memory_total_bytes	.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.systemMemoryTotal)*1000);
+		metrics.axway_apigateway_system_memory_used_bytes	.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.systemMemoryUsed)*1000);
 	}
 	return registry;
 }
@@ -62,7 +59,6 @@ async function processSummaryMetrics(params, options) {
 async function processTopologyInfo(params, options) {
 	const { gatewayTopology } = params;
 	const { logger } = options;
-	debugger;
 	const registry = await getRegistry();
 	const metrics = registry._metrics;
 	if (!gatewayTopology) {
@@ -71,24 +67,6 @@ async function processTopologyInfo(params, options) {
 
 	for(service of gatewayTopology.services) {
 		metrics.axway_apigateway_version_info		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, 1);
-	}
-	return registry;
-}
-
-async function processServiceMetricsFromSystemOverview(params, options) {
-	const { systemOverviewMetrics } = params;
-	const { logger } = options;
-	var cache = options.pluginContext.cache;
-	const registry = await getRegistry();
-	const metrics = registry._metrics;
-	if (!systemOverviewMetrics) {
-		throw new Error('Missing required parameter systemOverviewMetrics');
-	}
-	logger.info(`Processing: ${systemOverviewMetrics.length} service metrics.`);
-	for(metric of systemOverviewMetrics) {
-		metrics.axway_api_requests_success	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.successes, `${metric.gatewayId}#requestSuccessCacheKey`, cache, logger));
-		metrics.axway_api_requests_failures	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.failures, `${metric.gatewayId}#requestFailureCacheKey`, cache, logger));
-		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId }, await _getDiffInc(metric.exceptions, `${metric.gatewayId}#requestExceptionsCacheKey`, cache, logger));
 	}
 	return registry;
 }
@@ -102,39 +80,23 @@ async function processServiceMetrics(params, options) {
 	if (!serviceMetrics) {
 		throw new Error('Missing required parameter serviceMetrics');
 	}
+
 	logger.info(`Processing: ${serviceMetrics.length} service metrics.`);
 	for(metric of serviceMetrics) {
 		logger.info(`Processing service metrics for service: ${metric.name} on gateway: ${metric.gatewayId}`);
 		metrics.axway_api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.numMessages );
-		metrics.axway_api_requests_success		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.successes );
-		metrics.axway_api_requests_failures		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.failures );
-		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
+		metrics.axway_api_requests_success		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.successes) );
+		metrics.axway_api_requests_failures		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.failures) );
+		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.exceptions));
 		// For all given processing times 
 		var avgProcessed = false;
-		//var maxProcessed = false;
-		//var minProcessed = false;
 		for(processingTime of metric.processingTimeAvg) {
-			// Ignore processingTime 0, as it means, no API-Request has been processed
+			// Ignore processingTime 0, as it means, no API-Request has been processed and with that is doesn't affect the average
 			if(processingTime ==  0) continue;
 			logger.info(`Adding ProcessingTimeAvg ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
 			metrics.axway_api_requests_duration_milliseconds.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			avgProcessed = true;
 		}
-		/*for(processingTime of metric.processingTimeMax) {
-			// Ignore processingTime 0, as it means, no API-Request has been processed
-			if(processingTime ==  0) continue;
-			logger.info(`Adding ProcessingTimeMax ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
-			metrics.axway_api_requests_duration_max.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
-			maxProcessed = true;
-		}
-		for(processingTime of metric.processingTimeMin) {
-			// Ignore processingTime 0, as it means, no API-Request has been processed
-			if(processingTime ==  0) continue;			
-			logger.info(`Adding ProcessingTimeMin datapoint: ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
-			metrics.axway_api_requests_duration_min.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
-			minProcessed = true;
-		}
-		if(avgProcessed == false || maxProcessed == false || minProcessed == false) {*/
 		if(avgProcessed == false) {
 			logger.warn(`Missing timeProcessing time metrics: (avgProcessed: ${avgProcessed})`);
 		}
@@ -142,10 +104,25 @@ async function processServiceMetrics(params, options) {
 	return registry;
 }
 
+async function _getSum(array) {
+	if(array) {
+		return array.reduce(function(a, b) {return a + b; }, 0) 
+	} else {
+		return 0;
+	}
+}
+
+async function _getAvg(array) {
+	if(array) {
+		return Math.round(array.reduce((a,b) => a + b, 0) / array.length);
+	} else {
+		return 0;
+	}
+}
+
 module.exports = {
 	processServiceMetrics,
-	processSummaryMetrics,
+	processSystemMetrics,
 	processTopologyInfo,
-	processServiceMetricsFromSystemOverview,
 	getMetrics
 };

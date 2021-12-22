@@ -2,16 +2,24 @@ const https = require('https');
 const { sendRequest, loginToAdminNodeManager } = require('./utils');
 
 var cache;
-
+/**
+ * For some metrics we have to use the max values as the average is not realiable
+ */
 const metricTypes = {
 	"Service": [
 		"successes",
 		"failures",
 		"exceptions", 
 		"numMessages",
-		"processingTimeAvg",
-		"processingTimeMin",
-		"processingTimeMax"
+		"processingTimeAvg"
+	],
+	"System": [
+		"cpuUsedMax", 
+		"systemCpuMax", 
+		"memoryUsedMax", 
+		"diskUsedPercent",
+		"systemMemoryTotal",
+		"systemMemoryUsed"
 	]
 }
 
@@ -52,6 +60,11 @@ async function lookupTopology(params, options) {
 	return topology;
 }
 
+/**
+ * Metrics groups contain all the metrics recorded by the Admin-Node-Managers. 
+ * 
+ * For instance SystemOverview, Client, Services. They are needed to get the metrics based on the timeline.
+ */
 async function getMetricsGroups(params, options) {
 	const { topology } = params;
 	const anmConfig = options.pluginConfig.adminNodeManager;
@@ -72,27 +85,45 @@ async function getMetricsGroups(params, options) {
 	return metricGroups;
 }
 
-async function getSummaryMetrics(params, options) {
-	const { topology } = params;
-	const anmConfig = options.pluginConfig.adminNodeManager;
+/**
+ * Get system metrics, such a CPU-Usage, Memory usage from the ANM based on the timeline metrics
+ */
+async function getSystemMetrics(params, options) {
+	const { topology, metricsGroups } = params;
 	const { logger } = options;
 	if (!topology) {
 		throw new Error('Missing required parameter: topology');
 	}
-	var summaryMetrics = [];
-	for (const [key, service] of Object.entries(topology.services)) {
-		var instanceMetrics = await _getMetrics('summary', anmConfig, service.id, logger);
-		if(!instanceMetrics || instanceMetrics.length==0) {
-			logger.warn(`No summary metrics found for gateway instance: ${service.id}`);
-			continue;
-		}
-		summaryMetrics = summaryMetrics.concat(instanceMetrics);
+	if (!metricsGroups) {
+		throw new Error('Missing required parameter: metricsGroups');
 	}
-	return summaryMetrics;
+	var systemMetrics = await _getTimelineMetrics("SystemOverview", metricTypes.System, topology, metricsGroups, options);
+	return systemMetrics;
 }
 
-async function getTimelineMetrics(params, options) {
-	const { topology, metricsType, metricsGroups } = params;
+/**
+ * Get APIs metrics, such as duration from the ANM based on the timeline metrics
+ */
+ async function getServiceMetrics(params, options) {
+	const { topology, metricsGroups } = params;
+	const { logger } = options;
+	if (!topology) {
+		throw new Error('Missing required parameter: topology');
+	}
+	if (!metricsGroups) {
+		throw new Error('Missing required parameter: metricsGroups');
+	}
+	var serviceMetrics = await _getTimelineMetrics("Service", metricTypes.Service, topology, metricsGroups, options);
+	return serviceMetrics;
+}
+
+/**
+ * Gets metrics from the timeline, which are more precise, than using average values calculated on the last 10 minutes. 
+ * 
+ * This function returns the last non-read metric datapoints. 
+ * Depending on the metric type they might be threated differntly (e.g. avg metrics, vs. count metrics)
+ */
+async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metricsGroups, options) {
 	const anmConfig = options.pluginConfig.adminNodeManager;
 	cache = options.pluginContext.cache;
 	const { logger } = options;
@@ -102,49 +133,52 @@ async function getTimelineMetrics(params, options) {
 	if (!metricsGroups) {
 		throw new Error('Missing required parameter: metricsGroups');
 	}
-	if (!metricsType) {
-		throw new Error('Missing required parameter: metricsType');
+	if (!metricGroupType) {
+		throw new Error('Missing required parameter: metricGroupType');
 	}
 	var metricTypesQuery = "";
-	for (const [key, type] of Object.entries(metricTypes[metricsType])) { 
+	for (type of metricTypes) { 
 		metricTypesQuery += `&metricType=${type}`;
 	}
-	
 	var metrics = [];
+	debugger;
+	// For each API-Gateway found in the given topology ...
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var gwInstanceId = service.id;
 		// Check when metrics has been read last time from the API-Gateway instance
-		var lastReadTimestamp = cache.get(gwInstanceId);
+		var lastReadTimestamp = cache.get(`${gwInstanceId}###${metricGroupType}`);
 		if(!lastReadTimestamp) {
-			logger.info(`No previous last read timestamp found for API-Gateway instance: ${gwInstanceId}. Reading last data bucket only.`);
+			logger.info(`No previous last read timestamp found for API-Gateway instance: ${gwInstanceId} and metric group: ${metricGroupType}. Reading last data bucket only.`);
 		}
 		var pointEnd;
-		// Iterate over all metric groups for the gateway
+		// Iterate over all metric groups for the gateway 
+		// For instance MetricGroupType: Service has multiple entries each with a different name that contains the API-Name
+		// And SystemOverview has only one entry, but supports different metricTypes such as systemCpuAvg or memoryUsedAvg, etc.
 		var gwMetricGroups = metricsGroups[gwInstanceId];
 		for (const [key, group] of Object.entries(gwMetricGroups)) { 
-			if(group.type != metricsType) {
+			if(group.type != metricGroupType) {
 				continue;
 			}
-			var timelineMetrics = await _getMetrics(`timeline?timeline=10m&metricGroupType=${metricsType}&name=${group.name}${metricTypesQuery}`, anmConfig, gwInstanceId, logger);
+			var timelineMetrics = await _getMetrics(`timeline?timeline=10m&metricGroupType=${metricGroupType}&name=${group.name}${metricTypesQuery}`, anmConfig, gwInstanceId, logger);
 			if(!timelineMetrics || timelineMetrics.length==0) {
-				throw new Error(`Unexpectly found no timeline metrics for gateway instance: ${gwInstanceId} for ${metricsType}`);
+				throw new Error(`Unexpectly found no timeline metrics for gateway instance: ${gwInstanceId} for ${metricGroupType}`);
 			}
-			// Use the first serie from the API-Gateway instance, as they return the same pointStart anyway
-			// Add 10 minutes as the endpoint
+			// Use the first datapoint (which is basically the latest) from the returned API-Gateway timeline series
+			// As they return the same pointStart as request just add 10 minutes as the endpoint
 			pointEnd = timelineMetrics.series[0].pointStart + 600000;
 
 			// Create the required metrics object
-			var serviceMetrics = {
-				groupType: metricsType,
+			var finalMetrics = {
+				groupType: metricGroupType,
 				gatewayName: service.name,
 				gatewayId: service.id,
 				groupName: group.name,
 				name: group.name
 			}
-			metrics = metrics.concat(await _getDataFromTimeline(serviceMetrics, timelineMetrics, lastReadTimestamp, pointEnd, logger));
+			metrics = metrics.concat(await _getDataFromTimeline(finalMetrics, timelineMetrics, lastReadTimestamp, pointEnd, logger));
 		}
 		logger.info(`Successfully created/updated metrics.`);
-		cache.set(gwInstanceId, pointEnd)
+		cache.set(`${gwInstanceId}###${metricGroupType}`, pointEnd)
 	}
 	return metrics;
 }
@@ -168,41 +202,19 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 			var points2Read = diff/pointInterval;
 			var value = 0;
 			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Reading last ${points2Read} data point for metric ${serieName}`);
-			// Variable just to create a nicer log message
-			var readDataPoints = [];
 			// Iterate over the last datapoints required to read
 			for(var i=1; i<=points2Read; i++) {
-				// For the processingTimes we try to avoid creating an average of an average and record each processing time individually
-				// which will be added later to Histogram buckets
-				if(serie.name.startsWith('processingTime')) {
-					debugger;
-					var avgDataPoint = serie.data[serie.data.length - i];
-					if(!metrics[serieName]) metrics[serieName] = [];
-					metrics[serieName].push(avgDataPoint);
-				} else {
-					readDataPoints.push(serie.data[serie.data.length - i]);
-					// For total values, we calculate the sum of all datapoints
-					value = value + serie.data[serie.data.length - i];
-					metrics[serieName] = value;
-				}
-			}
-			if(serie.name.startsWith('processingTime')) {
-				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Collected last ${points2Read} processing time datapoints: ${JSON.stringify(metrics[serieName])}.`);
-			} else {
-				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Calculated ${value} based on last ${points2Read} datapoints: ${JSON.stringify(readDataPoints)}.`);
-			}
-		} else {
-			// If no data has been read previously, only read the last data bucket 
-			// to avoid spikes in the result.
-			// However, this requires, that data is constanly scraped by Prom as they set the timestamp
-			if(serie.name.startsWith('processingTime')) {
-				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Using last average bucket value: ${serie.data[serie.data.length - 1]}`);
+				// Return the read datapoints which can be processed depending on the type
+				var readDatapoints = serie.data[serie.data.length - i];
 				if(!metrics[serieName]) metrics[serieName] = [];
-				metrics[serieName].push(serie.data[serie.data.length - 1]);
-			} else {
-				logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Using last bucket value: ${serie.data[serie.data.length - 1]}`);
-				metrics[serieName] = serie.data[serie.data.length - 1];
+				metrics[serieName].push(readDatapoints);
 			}
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Collected last ${points2Read} processing time datapoints: ${JSON.stringify(metrics[serieName])}.`);
+		} else {
+			// If no data has been read previously, just read the last data point only to avoid unrealistic spikes in the result.
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Return last datapoint: ${serie.data[serie.data.length - 1]}`);
+			if(!metrics[serieName]) metrics[serieName] = [];
+			metrics[serieName].push(serie.data[serie.data.length - 1]);
 		}
 	}
 	return metrics;
@@ -266,6 +278,6 @@ async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
 module.exports = {
 	lookupTopology,
 	getMetricsGroups,
-	getTimelineMetrics,
-	getSummaryMetrics
+	getServiceMetrics,
+	getSystemMetrics
 };
