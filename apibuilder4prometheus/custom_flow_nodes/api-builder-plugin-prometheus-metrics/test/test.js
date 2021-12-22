@@ -52,6 +52,7 @@ describe('flow-node prometheus-metrics', () => {
 			expect(value).to.be.instanceOf(client.Registry);
 			// Check some of the returned metrics
 			var instanceCPUMetric = await value.getSingleMetric('axway_apigateway_instance_cpu_ratio').get();
+			var systemCPUMetric = await value.getSingleMetric('axway_apigateway_system_cpu_ratio').get();
 			expect(instanceCPUMetric.type).to.equal('gauge');
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
@@ -59,6 +60,11 @@ describe('flow-node prometheus-metrics', () => {
 					{ labels: { gatewayId: 'instance-1'}, value: 0 },
 					{ labels: { gatewayId: 'instance-2'}, value: 1 }
 				]);
+			expect(systemCPUMetric.values).to.deep.equal(
+					[ 
+						{ labels: { gatewayId: 'instance-1'}, value: 51 },
+						{ labels: { gatewayId: 'instance-2'}, value: 85 }
+					]);
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
 			var diskUsed = await value.getSingleMetric('axway_apigateway_instance_disk_used_ratio').get();
 			var memUsed = await value.getSingleMetric('axway_apigateway_memory_used_bytes').get();

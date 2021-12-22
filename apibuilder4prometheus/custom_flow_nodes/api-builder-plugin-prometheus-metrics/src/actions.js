@@ -42,6 +42,7 @@ async function processSummaryMetrics(params, options) {
 	for(metric of summaryMetrics) {
 		metrics.axway_apigateway_instance_disk_used_ratio	.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
 		metrics.axway_apigateway_instance_cpu_ratio			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
+		metrics.axway_apigateway_system_cpu_ratio			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
 		//metrics.axway_apigateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
 		//metrics.axway_apigateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
 		//metrics.axway_apigateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);

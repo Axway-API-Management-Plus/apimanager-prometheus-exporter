@@ -16,8 +16,9 @@ async function createRegistry(pluginConfig, logger) {
         new client.Gauge({ name: 'axway_apigateway_version_info',               help: 'Version information about the API-Gateway', labelNames: ['gatewayId', 'version', 'image']});
         new client.Gauge({ name: 'up',                                          help: 'up 1 = up, 0 = not up', labelNames: ['gatewayId']});
 
-        new client.Gauge({ name: 'axway_apigateway_instance_disk_used_ratio',   help: 'Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR)', labelNames: ['gatewayId']});
-        new client.Gauge({ name: 'axway_apigateway_instance_cpu_ratio',         help: 'Percentage of current process CPU usage (total usage divided by the number of cores', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_disk_used_ratio',   help: 'Percentage of disk used (disk on which the API Gateway instance is running: $VINSTDIR) (ANM metric: diskUsedPercent)', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_instance_cpu_ratio',         help: 'Percentage of current API-Gateway process CPU usage. (ANM metric: cpuUsed)', labelNames: ['gatewayId']});
+        new client.Gauge({ name: 'axway_apigateway_system_cpu_ratio',         help: 'Total CPU usage on the machine as a percentage of all processes. (ANM metric: systemCpuAvg)', labelNames: ['gatewayId']});
         //new client.Gauge({ name: 'axway_apigateway_instance_cpu_avg',       help: 'Average CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
         //new client.Gauge({ name: 'axway_apigateway_instance_cpu_min',       help: 'Min CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
         //new client.Gauge({ name: 'axway_apigateway_instance_cpu_max',       help: 'Max CPU usage per instance in a 10 minutes time range', labelNames: ['gatewayId']});
