@@ -45,7 +45,6 @@ async function processSystemMetrics(params, options) {
 		 * of course, only one value can be stored in the prom registry at a time. 
 		 * The more often polling is done (both API Builder --> ANM & Prom-Scraper --> API Builder) the more accurate the data will be.
 		 */
-		debugger;
 		metrics.axway_apigateway_instance_disk_used_ratio	.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.diskUsedPercent));
 		metrics.axway_apigateway_instance_cpu_ratio			.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.cpuUsedMax));
 		metrics.axway_apigateway_system_cpu_ratio			.set({ gatewayId: metric.gatewayId }, await _getAvg(metric.systemCpuMax));
@@ -83,12 +82,13 @@ async function processServiceMetrics(params, options) {
 
 	logger.info(`Processing: ${serviceMetrics.length} service metrics.`);
 	for(metric of serviceMetrics) {
-		logger.info(`Processing service metrics for service: ${metric.name} on gateway: ${metric.gatewayId}`);
-		metrics.axway_api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.numMessages );
+		logger.info(`Processing service metrics for service: '${metric.name}' on gateway: ${metric.gatewayId}`);
+		metrics.axway_api_requests_total		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.numMessages) );
 		metrics.axway_api_requests_success		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.successes) );
 		metrics.axway_api_requests_failures		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.failures) );
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.exceptions));
 		// For all given processing times 
+		debugger;
 		var avgProcessed = false;
 		for(processingTime of metric.processingTimeAvg) {
 			// Ignore processingTime 0, as it means, no API-Request has been processed and with that is doesn't affect the average
@@ -98,7 +98,7 @@ async function processServiceMetrics(params, options) {
 			avgProcessed = true;
 		}
 		if(avgProcessed == false) {
-			logger.warn(`Missing timeProcessing time metrics: (avgProcessed: ${avgProcessed})`);
+			logger.warn(`Ignore processing time datapoints: ${JSON.stringify(metric.processingTimeAvg)} for API: ${metric.name} on gatewayId: ${metric.gatewayId} as the API very likely wasn't called.`);
 		}
 	}
 	return registry;

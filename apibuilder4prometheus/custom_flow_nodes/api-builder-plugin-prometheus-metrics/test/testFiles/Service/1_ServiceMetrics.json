@@ -9,7 +9,8 @@
     "successes": [ 788, 533, 355, 400, 2 ],
     "processingTimeAvg": [101],
     "processingTimeMin": [16],
-    "processingTimeMax": [179]
+    "processingTimeMax": [179],
+    "numMessages": [17,160,5]
   },
   {
     "groupType": "Service",
@@ -22,7 +23,8 @@
     "exceptions": [1],
     "processingTimeAvg": [0,5,0,101],
     "processingTimeMin": [17,16,0,1],
-    "processingTimeMax": [80,0,0,179]
+    "processingTimeMax": [80,0,0,179],
+    "numMessages": [17,160,5]
   },
   {
     "groupType": "Service",
@@ -36,7 +38,7 @@
     "processingTimeAvg": [101],
     "processingTimeMin": [16],
     "processingTimeMax": [179],
-    "numMessages": 6
+    "numMessages": [17,160,5]
   },
   {
     "groupType": "Service",

@@ -73,6 +73,7 @@ async function getMetricsGroups(params, options) {
 		throw new Error('Missing required parameter: topology');
 	}
 	var metricGroups = {};
+	var allGatewaysFail = true;
 	// Get the metric groups for each API-Gateway instance
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var groups = await _getMetrics('groups', anmConfig, service.id, logger);
@@ -80,7 +81,11 @@ async function getMetricsGroups(params, options) {
 			logger.warn(`No metrics groups found for gateway instance: ${service.id}`);
 			continue;
 		}
+		allGatewaysFail = false;
 		metricGroups[service.id] = groups;
+	}
+	if(allGatewaysFail) {
+		throw new Error(`Error reading metric groups from all API-Gateways.`);
 	}
 	return metricGroups;
 }
@@ -140,8 +145,9 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 	for (type of metricTypes) { 
 		metricTypesQuery += `&metricType=${type}`;
 	}
-	var metrics = [];
 	debugger;
+	var metrics = [];
+	var failedAPIGateways = [];
 	// For each API-Gateway found in the given topology ...
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var gwInstanceId = service.id;
@@ -161,7 +167,9 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 			}
 			var timelineMetrics = await _getMetrics(`timeline?timeline=10m&metricGroupType=${metricGroupType}&name=${group.name}${metricTypesQuery}`, anmConfig, gwInstanceId, logger);
 			if(!timelineMetrics || timelineMetrics.length==0) {
-				throw new Error(`Unexpectly found no timeline metrics for gateway instance: ${gwInstanceId} for ${metricGroupType}`);
+				logger.warn(`Error reading timeline metrics from gateway instance: ${gwInstanceId} for ${metricGroupType}`);
+				failedAPIGateways.push(gwInstanceId);
+				break; // No need to iterate over additional mectricGroups for this API-Gateway
 			}
 			// Use the first datapoint (which is basically the latest) from the returned API-Gateway timeline series
 			// As they return the same pointStart as request just add 10 minutes as the endpoint
@@ -177,8 +185,14 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 			}
 			metrics = metrics.concat(await _getDataFromTimeline(finalMetrics, timelineMetrics, lastReadTimestamp, pointEnd, logger));
 		}
-		logger.info(`Successfully created/updated metrics.`);
 		cache.set(`${gwInstanceId}###${metricGroupType}`, pointEnd)
+	}
+	logger.info(`Updated metrics from ANM for ${topology.services.length} API-Gateways. Failed: ${failedAPIGateways.length}.`);
+	if(failedAPIGateways.length>0) {
+		logger.warn(`There was an error reading metrics from ${failedAPIGateways} out of ${topology.services.length} API-Gateway instances.`);
+		if(failedAPIGateways.length==topology.services.length) {
+			throw new Error(`Error reading metrics from all API-Gateways: ${failedAPIGateways}.`);
+		}	
 	}
 	return metrics;
 }
@@ -201,7 +215,6 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 			// Depending on the difference, we know how many data points to read
 			var points2Read = diff/pointInterval;
 			var value = 0;
-			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Reading last ${points2Read} data point for metric ${serieName}`);
 			// Iterate over the last datapoints required to read
 			for(var i=1; i<=points2Read; i++) {
 				// Return the read datapoints which can be processed depending on the type
@@ -209,7 +222,7 @@ async function _getDataFromTimeline(metrics, timelineMetrics, lastReadTimestamp,
 				if(!metrics[serieName]) metrics[serieName] = [];
 				metrics[serieName].push(readDatapoints);
 			}
-			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Collected last ${points2Read} processing time datapoints: ${JSON.stringify(metrics[serieName])}.`);
+			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Read last ${points2Read} datapoints: ${JSON.stringify(metrics[serieName])}.`);
 		} else {
 			// If no data has been read previously, just read the last data point only to avoid unrealistic spikes in the result.
 			logger.info(`Group-Name: ${metrics.name} (${serieName}/${metrics.gatewayId}): Return last datapoint: ${serie.data[serie.data.length - 1]}`);
@@ -261,12 +274,12 @@ async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
 		.catch(err => {
 			if(err.code == "ECONNRESET") {
 				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Request timed out (ECONNRESET). Perhaps instance is down.`);
-				logger.debug(`Error message: ${JSON.stringify(err)}`);
+				logger.error(`Error message: ${JSON.stringify(err)}`);
 				return [];
 			}
-			if(err.statusCode == 503) { // API-Gateway might be down
-				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Got status code: 503. Perhaps instance is down.`);
-				logger.debug(`Error message: ${JSON.stringify(err)}`);
+			if(err.statusCode == 503 || err.statusCode == 500) { // API-Gateway might be down
+				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Got status code: ${err.statusCode}. Perhaps instance is down.`);
+				logger.error(`Error message: ${JSON.stringify(err)}`);
 				return [];
 			} 
 			logger.error(`Error getting API-Gateway metrics: '${metricsResource}' from Admin-Node-Manager. Request sent to: '${anmConfig.url}'. Response-Code: ${err.statusCode}`);

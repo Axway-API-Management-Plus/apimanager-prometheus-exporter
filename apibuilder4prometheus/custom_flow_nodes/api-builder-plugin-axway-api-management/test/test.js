@@ -31,6 +31,7 @@ describe('Tests', () => {
 	pluginConfig.testCache = testCache;
 
 	beforeEach(async () => {
+		nock.cleanAll();
 		nock('https://mocked-api-gateway:8190').post('/api/rbac/login').reply(303, [], { 'set-cookie': 'VIDUSR=1636962018-Ip/kbTlYhOpDbA==;' });
 		plugin = await MockRuntime.loadPlugin(getPlugin, pluginConfig);
 		plugin.setOptions({ validateOutputs: true });
@@ -88,6 +89,47 @@ describe('Tests', () => {
 				.and.to.have.property('message', 'Missing required parameter: metricsGroups');
 		});
 
+		it('should handle a missing API-Gateway instance gracefully', async () => {
+			// Simulate instance-1 is down while trying read metrics
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Petstore${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-2/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=FHIR%20CarePlan${serviceMetricTypes}`)
+				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/3_ServiceTimeLine.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-2/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=EMR-DiagnosticInfo${serviceMetricTypes}`)
+				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/4_ServiceTimeLine.json');
+
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
+			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result };
+
+			const { value, output } = await flowNode.getServiceMetrics({ topology: testTopology, metricsGroups: testGroups });
+			expect(output).to.equal('next');
+		});
+
+		it('should should fail if all API-Gateway instances are down', async () => {
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Petstore${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-2/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=FHIR%20CarePlan${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-2/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=EMR-DiagnosticInfo${serviceMetricTypes}`)
+				.replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
+			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result };
+
+			const { value, output } = await flowNode.getServiceMetrics({ topology: testTopology, metricsGroups: testGroups });
+			expect(output).to.equal('error');
+			expect(value).to.be.instanceOf(Object)
+				.and.to.have.property('message', 'Error reading metrics from all API-Gateways: instance-1,instance-2.');
+		});
+
 		it('should result into SERVICE-METRICS based on the timeline metrics', async () => {
 			nock('https://mocked-api-gateway:8190').get(`/api/router/service/instance-1/api/monitoring/metrics/timeline?timeline=10m&metricGroupType=Service&name=Greeting%20API${serviceMetricTypes}`)
 				.replyWithFile(200, './test/testReplies/anm/metrics/Timeline/1_ServiceTimeLine.json');
@@ -101,7 +143,7 @@ describe('Tests', () => {
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
 			var instance1Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/1_MetricsGroups.json'), null);
 			var instance2Groups = JSON.parse(fs.readFileSync('./test/testReplies/anm/metrics/Groups/2_MetricsGroups.json'), null);
-			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result }
+			var testGroups = { "instance-1": instance1Groups.result, "instance-2": instance2Groups.result };
 			// Initially only the last data point is expected for all series as the cache is not yet populated
 			const { value, output } = await flowNode.getServiceMetrics({ topology: testTopology, metricsGroups: testGroups });
 			

@@ -140,7 +140,9 @@
 			"outputs": {
 				"next": {
 					"context": "$.response",
-					"routes": [],
+					"routes": [
+						"power.1"
+					],
 					"metaName": "Next"
 				}
 			},
@@ -183,12 +185,16 @@
 				{
 					"name": "topology",
 					"type": "jsonpath",
-					"value": "$.gatewayTopology"
+					"value": "$.gatewayTopology",
+					"metaName": "Topology",
+					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
 				},
 				{
 					"name": "metricsGroups",
 					"type": "jsonpath",
-					"value": "$.metricsGroups"
+					"value": "$.metricsGroups",
+					"metaName": "Metrics groups",
+					"metaDescription": "The collected Metrics-Groups for all API-Gateways"
 				}
 			],
 			"outputs": {
@@ -196,11 +202,48 @@
 					"routes": [
 						"prometheus-metrics.1"
 					],
-					"context": "$.metrics"
+					"context": "$.serviceMetrics",
+					"metaName": "Next"
 				},
 				"error": {
-					"routes": [],
-					"context": "$.error"
+					"routes": [
+						"http.1"
+					],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Get service metrics"
+		},
+		"power.1": {
+			"type": "nodehandler://@axway-api-builder-ext/api-builder-plugin-fn-power/power",
+			"name": "Shutdown",
+			"method": "shutdown",
+			"parameters": [
+				{
+					"name": "errorCode",
+					"type": "number",
+					"value": "99"
+				},
+				{
+					"name": "errorMessage",
+					"type": "jsonpath",
+					"value": "$.error"
+				},
+				{
+					"name": "skipInDevelopment",
+					"type": "boolean",
+					"value": "true"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.errorMessage",
+					"routes": []
+				},
+				"error": {
+					"context": "$.error",
+					"routes": []
 				}
 			}
 		}
