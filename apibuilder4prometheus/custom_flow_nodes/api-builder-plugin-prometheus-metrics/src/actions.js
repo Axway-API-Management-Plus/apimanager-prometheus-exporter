@@ -39,21 +39,21 @@ async function processSummaryMetrics(params, options) {
 	if (!summaryMetrics) {
 		throw new Error('Missing required parameter summaryMetrics');
 	}
-
 	for(metric of summaryMetrics) {
-		metrics.axway_apigateway_instance_disk_used		.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
-		metrics.axway_apigateway_instance_cpu			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
-		metrics.axway_apigateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
-		metrics.axway_apigateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
-		metrics.axway_apigateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);
-		metrics.axway_apigateway_system_cpu_avg			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
-		metrics.axway_apigateway_system_cpu_min			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMin);
-		metrics.axway_apigateway_system_cpu_max			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMax);
-		metrics.axway_apigateway_instance_memory_min		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMin);
-		metrics.axway_apigateway_instance_memory_max		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMax);
-		metrics.axway_apigateway_instance_memory_avg		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg);
-		metrics.axway_apigateway_system_memory			.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed);
-		metrics.axway_apigateway_system_memory_total		.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal);
+		metrics.axway_apigateway_instance_disk_used_ratio	.set({ gatewayId: metric.gatewayId }, metric.diskUsedPercent);
+		metrics.axway_apigateway_instance_cpu_ratio			.set({ gatewayId: metric.gatewayId }, metric.cpuUsed);
+		//metrics.axway_apigateway_instance_cpu_avg		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedAvg);
+		//metrics.axway_apigateway_instance_cpu_min		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMin);
+		//metrics.axway_apigateway_instance_cpu_max		.set({ gatewayId: metric.gatewayId }, metric.cpuUsedMax);
+		//metrics.axway_apigateway_system_cpu_avg			.set({ gatewayId: metric.gatewayId }, metric.systemCpuAvg);
+		//metrics.axway_apigateway_system_cpu_min			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMin);
+		//metrics.axway_apigateway_system_cpu_max			.set({ gatewayId: metric.gatewayId }, metric.systemCpuMax);
+		//metrics.axway_apigateway_instance_memory_min		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMin);
+		//metrics.axway_apigateway_instance_memory_max		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedMax);
+		//metrics.axway_apigateway_instance_memory_avg		.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg);
+		metrics.axway_apigateway_memory_used_bytes			.set({ gatewayId: metric.gatewayId }, metric.memoryUsedAvg*1000);
+		metrics.axway_apigateway_system_memory_total_bytes	.set({ gatewayId: metric.gatewayId }, metric.systemMemoryTotal*1000);
+		metrics.axway_apigateway_system_memory_used_bytes	.set({ gatewayId: metric.gatewayId }, metric.systemMemoryUsed*1000);
 	}
 	return registry;
 }
@@ -69,7 +69,7 @@ async function processTopologyInfo(params, options) {
 	}
 
 	for(service of gatewayTopology.services) {
-		metrics.axway_apigateway_version		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, 1);
+		metrics.axway_apigateway_version_info		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, 1);
 	}
 	return registry;
 }
@@ -110,16 +110,16 @@ async function processServiceMetrics(params, options) {
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, metric.exceptions );
 		// For all given processing times 
 		var avgProcessed = false;
-		var maxProcessed = false;
-		var minProcessed = false;
+		//var maxProcessed = false;
+		//var minProcessed = false;
 		for(processingTime of metric.processingTimeAvg) {
 			// Ignore processingTime 0, as it means, no API-Request has been processed
 			if(processingTime ==  0) continue;
 			logger.info(`Adding ProcessingTimeAvg ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
-			metrics.axway_api_requests_duration_avg.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
+			metrics.axway_api_requests_duration_milliseconds.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			avgProcessed = true;
 		}
-		for(processingTime of metric.processingTimeMax) {
+		/*for(processingTime of metric.processingTimeMax) {
 			// Ignore processingTime 0, as it means, no API-Request has been processed
 			if(processingTime ==  0) continue;
 			logger.info(`Adding ProcessingTimeMax ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
@@ -133,8 +133,9 @@ async function processServiceMetrics(params, options) {
 			metrics.axway_api_requests_duration_min.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			minProcessed = true;
 		}
-		if(avgProcessed == false || maxProcessed == false || minProcessed == false) {
-			logger.warn(`Missing timeProcessing time metrics: (avgProcessed: ${avgProcessed}, maxProcessed: ${maxProcessed}, minProcessed: ${minProcessed})`);
+		if(avgProcessed == false || maxProcessed == false || minProcessed == false) {*/
+		if(avgProcessed == false) {
+			logger.warn(`Missing timeProcessing time metrics: (avgProcessed: ${avgProcessed})`);
 		}
 	}
 	return registry;

@@ -51,7 +51,7 @@ describe('flow-node prometheus-metrics', () => {
 			const { value, output } = await flowNode.processSummaryMetrics({ summaryMetrics: testMetrics });
 			expect(value).to.be.instanceOf(client.Registry);
 			// Check some of the returned metrics
-			var instanceCPUMetric = await value.getSingleMetric('axway_apigateway_instance_cpu').get();
+			var instanceCPUMetric = await value.getSingleMetric('axway_apigateway_instance_cpu_ratio').get();
 			expect(instanceCPUMetric.type).to.equal('gauge');
 			expect(instanceCPUMetric.values).to.lengthOf(2); // 2 API-Gateway instances
 			expect(instanceCPUMetric.values).to.deep.equal(
@@ -59,17 +59,25 @@ describe('flow-node prometheus-metrics', () => {
 					{ labels: { gatewayId: 'instance-1'}, value: 0 },
 					{ labels: { gatewayId: 'instance-2'}, value: 1 }
 				]);
-			expect(await value.getSingleMetric('axway_apigateway_instance_disk_used').get()).to.be.a('object');
 			// As of now, SystemOverview is also used to get API-Requests information until this is fixed: https://support.axway.com/en/case-global/view/id/01314580
-			var diskUsed = await value.getSingleMetric('axway_apigateway_instance_disk_used').get();
-			var minMemory = await value.getSingleMetric('axway_apigateway_instance_memory_min').get();
-			
+			var diskUsed = await value.getSingleMetric('axway_apigateway_instance_disk_used_ratio').get();
+			var memUsed = await value.getSingleMetric('axway_apigateway_memory_used_bytes').get();
+			var systemMemTotal = await value.getSingleMetric('axway_apigateway_system_memory_total_bytes').get();
+			var systemMemUsed = await value.getSingleMetric('axway_apigateway_system_memory_used_bytes').get();
+
+			expect(diskUsed).to.be.a('object');
 			expect(diskUsed.values).to.lengthOf(2); 
 			expect(diskUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 26 });
 			expect(diskUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 55 });
-			expect(minMemory.values).to.lengthOf(2); 
-			expect(minMemory.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 956784 });
-			expect(minMemory.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 1441080 });
+			expect(memUsed.values).to.lengthOf(2); 
+			expect(memUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 959129000 });
+			expect(memUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 1441080000 });
+			expect(systemMemTotal.values).to.lengthOf(2); 
+			expect(systemMemTotal.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 32464408000 });
+			expect(systemMemTotal.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 16266504000 });
+			expect(systemMemUsed.values).to.lengthOf(2); 
+			expect(systemMemUsed.values[0]).to.deep.equal( { labels: { 'gatewayId': 'instance-1'}, value: 32145900000 });
+			expect(systemMemUsed.values[1]).to.deep.equal( { labels: { 'gatewayId': 'instance-2'}, value: 15510580000 });
 			expect(output).to.equal('next');
 		});
 	});
@@ -98,9 +106,9 @@ describe('flow-node prometheus-metrics', () => {
 			var apiRequestsSuccess = await value.getSingleMetric('axway_api_requests_success').get();
 			var apiRequestsFailure = await value.getSingleMetric('axway_api_requests_failures').get();
 			var apiRequestsExceptions = await value.getSingleMetric('axway_api_requests_exceptions').get();
-			var apiRequestsDurationAvg = await value.getSingleMetric('axway_api_requests_duration_avg').get();
-			var apiRequestsDurationMax = await value.getSingleMetric('axway_api_requests_duration_max').get();
-			var apiRequestsDurationMin = await value.getSingleMetric('axway_api_requests_duration_min').get();
+			var apiRequestsDuration = await value.getSingleMetric('axway_api_requests_duration_milliseconds').get();
+			//var apiRequestsDurationMax = await value.getSingleMetric('axway_api_requests_duration_max').get();
+			//var apiRequestsDurationMin = await value.getSingleMetric('axway_api_requests_duration_min').get();
 			
 			
 			expect(apiRequestsTotal.type).to.equal('counter');
@@ -117,9 +125,9 @@ describe('flow-node prometheus-metrics', () => {
 			expect(apiRequestsFailure.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
 			expect(apiRequestsExceptions.values[2]).to.deep.equal( { labels: { 'gatewayId': 'instance-2', "service": "FHIR CarePlan"}, value: 0 });
 
-			expect(apiRequestsDurationAvg.type).to.equal('histogram');
-			expect(apiRequestsDurationMax.type).to.equal('histogram');
-			expect(apiRequestsDurationMin.type).to.equal('histogram');
+			expect(apiRequestsDuration.type).to.equal('histogram');
+			expect(apiRequestsDuration.type).to.equal('histogram');
+			expect(apiRequestsDuration.type).to.equal('histogram');
 
 			// Check for the Petstore service, has some duration (processingTime) test values
 			expect(output).to.equal('next');
@@ -183,7 +191,7 @@ describe('flow-node prometheus-metrics', () => {
 
 			expect(value).to.be.instanceOf(client.Registry);
 			
-			var versionInfo = await value.getSingleMetric('axway_apigateway_version').get();
+			var versionInfo = await value.getSingleMetric('axway_apigateway_version_info').get();
 
 			expect(versionInfo.type).to.equal('gauge');
 			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected
