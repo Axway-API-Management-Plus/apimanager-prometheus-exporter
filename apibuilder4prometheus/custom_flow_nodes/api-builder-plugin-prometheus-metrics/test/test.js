@@ -189,9 +189,9 @@ describe('flow-node prometheus-metrics', () => {
 			expect(output).to.equal('error');
 		});
 
-		it('should update the service registry based on the given topology', async () => {
+		it('should update the service registry based on the given topology and in the second call remove a stopped API-Gateway', async () => {
 			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/Topology/testTopology.json'), null);
-			const { value, output } = await flowNode.processTopologyInfo({ gatewayTopology: testTopology });
+			var { value, output } = await flowNode.processTopologyInfo({ gatewayTopology: testTopology });
 
 			expect(value).to.be.instanceOf(client.Registry);
 			
@@ -200,7 +200,16 @@ describe('flow-node prometheus-metrics', () => {
 			expect(versionInfo.type).to.equal('gauge');
 			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected
 			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-2", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 			expect(output).to.equal('next');
+
+			var changedTopology = JSON.parse(fs.readFileSync('./test/testFiles/Topology/changedTopology.json'), null);
+
+			var result = await flowNode.processTopologyInfo({ gatewayTopology: changedTopology });
+
+			var versionInfo = await result.value.getSingleMetric('axway_apigateway_version_info').get();
+			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-3", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 		});
 	});
 });

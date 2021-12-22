@@ -64,6 +64,9 @@ async function processTopologyInfo(params, options) {
 		throw new Error('Missing required parameter gatewayTopology');
 	}
 
+	// Reset as previously added API-Gateway might have stopped/removed from the topology
+	metrics.axway_apigateway_version_info.reset();
+
 	for(service of gatewayTopology.services) {
 		metrics.axway_apigateway_version_info		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, 1);
 	}

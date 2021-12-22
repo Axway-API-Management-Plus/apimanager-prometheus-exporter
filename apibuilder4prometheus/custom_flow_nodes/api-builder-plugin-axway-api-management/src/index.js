@@ -18,7 +18,7 @@ const { loginToAdminNodeManager } = require('./utils');
 async function getPlugin(pluginConfig, options) {
 	var cache;
 	if(!pluginConfig.testCache) {
-		cache = new NodeCache({ stdTTL: 60, useClones: false });
+		cache = new NodeCache({ stdTTL: 120, useClones: false });
 	} else {
 		// Use the Test-Cache is given by a Unit-Test
 		cache = pluginConfig.testCache;

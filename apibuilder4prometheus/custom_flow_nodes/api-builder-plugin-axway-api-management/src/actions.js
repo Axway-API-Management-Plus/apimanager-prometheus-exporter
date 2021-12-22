@@ -45,7 +45,12 @@ const metricTypes = {
  */
 async function lookupTopology(params, options) {
 	const anmConfig = options.pluginConfig.adminNodeManager;
+	cache = options.pluginContext.cache;
 	const { logger } = options;
+	if(cache.get('ANM_TOPOLOGY')) {
+		options.logger.info(`Return cached topology.`);
+		return topology;
+	}
 	try {
 		topology = await _getTopology(anmConfig, logger);
 	} catch (err) {
@@ -57,6 +62,7 @@ async function lookupTopology(params, options) {
 		}
 		topology = await _getTopology(anmConfig, logger);
 	}
+	cache.set('ANM_TOPOLOGY', topology);
 	return topology;
 }
 
@@ -68,6 +74,7 @@ async function lookupTopology(params, options) {
 async function getMetricsGroups(params, options) {
 	const { topology } = params;
 	const anmConfig = options.pluginConfig.adminNodeManager;
+	cache = options.pluginContext.cache;
 	const { logger } = options;
 	if (!topology) {
 		throw new Error('Missing required parameter: topology');
@@ -79,6 +86,9 @@ async function getMetricsGroups(params, options) {
 		var groups = await _getMetrics('groups', anmConfig, service.id, logger);
 		if(!groups || groups.length==0) {
 			logger.warn(`No metrics groups found for gateway instance: ${service.id}`);
+			
+			const { logger } = options;
+			if(cache.get('ANM_TOPOLOGY')) {
 			continue;
 		}
 		allGatewaysFail = false;
@@ -162,6 +172,7 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 		var gwMetricGroups = metricsGroups[gwInstanceId];
 		if(!gwMetricGroups) {
 			logger.error(`No metrics groups for gateway instance: ${gwInstanceId}. Cannot read timeline metrics without it.`);
+			failedAPIGateways.push(gwInstanceId);
 			continue;
 		}
 		for (const [key, group] of Object.entries(gwMetricGroups)) { 
@@ -188,7 +199,7 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 			}
 			metrics = metrics.concat(await _getDataFromTimeline(finalMetrics, timelineMetrics, lastReadTimestamp, pointEnd, logger));
 		}
-		cache.set(`${gwInstanceId}###${metricGroupType}`, pointEnd)
+		cache.set(`${gwInstanceId}###${metricGroupType}`, pointEnd);
 	}
 	logger.info(`Updated metrics from ANM for ${topology.services.length} API-Gateways. Failed: ${failedAPIGateways.length}.`);
 	if(failedAPIGateways.length>0) {
