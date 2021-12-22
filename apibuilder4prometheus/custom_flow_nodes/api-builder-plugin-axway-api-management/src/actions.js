@@ -145,7 +145,6 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 	for (type of metricTypes) { 
 		metricTypesQuery += `&metricType=${type}`;
 	}
-	debugger;
 	var metrics = [];
 	var failedAPIGateways = [];
 	// For each API-Gateway found in the given topology ...
@@ -161,6 +160,10 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 		// For instance MetricGroupType: Service has multiple entries each with a different name that contains the API-Name
 		// And SystemOverview has only one entry, but supports different metricTypes such as systemCpuAvg or memoryUsedAvg, etc.
 		var gwMetricGroups = metricsGroups[gwInstanceId];
+		if(!gwMetricGroups) {
+			logger.error(`No metrics groups for gateway instance: ${gwInstanceId}. Cannot read timeline metrics without it.`);
+			continue;
+		}
 		for (const [key, group] of Object.entries(gwMetricGroups)) { 
 			if(group.type != metricGroupType) {
 				continue;
@@ -259,7 +262,7 @@ async function _getTopology(anmConfig, logger) {
 }
 
 async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
-	logger.info(`Get metrics with from instance: ${instanceId} from ANM: ${anmConfig.url}`);
+	logger.info(`Get metrics for instance: ${instanceId} from ANM: ${anmConfig.url}`);
 	var options = {
 		path: `/api/router/service/${instanceId}/api/monitoring/metrics/${metricsResource}`,
 		headers: anmConfig.requestHeaders,
@@ -278,7 +281,7 @@ async function _getMetrics(metricsResource, anmConfig, instanceId, logger) {
 				return [];
 			}
 			if(err.statusCode == 503 || err.statusCode == 500) { // API-Gateway might be down
-				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Got status code: ${err.statusCode}. Perhaps instance is down.`);
+				logger.warn(`Unable to read metrics from Gateway-Instance: ${instanceId}. Got status code: ${err.statusCode}. Perhaps instance doesn't exists anymore.`);
 				logger.error(`Error message: ${JSON.stringify(err)}`);
 				return [];
 			} 

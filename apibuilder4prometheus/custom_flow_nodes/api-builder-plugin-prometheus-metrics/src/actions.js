@@ -88,7 +88,6 @@ async function processServiceMetrics(params, options) {
 		metrics.axway_api_requests_failures		.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.failures) );
 		metrics.axway_api_requests_exceptions	.inc({ gatewayId: metric.gatewayId, service: metric.name }, await _getSum(metric.exceptions));
 		// For all given processing times 
-		debugger;
 		var avgProcessed = false;
 		for(processingTime of metric.processingTimeAvg) {
 			// Ignore processingTime 0, as it means, no API-Request has been processed and with that is doesn't affect the average
