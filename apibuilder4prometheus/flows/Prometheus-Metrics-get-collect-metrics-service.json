@@ -71,7 +71,7 @@
 			"outputs": {
 				"next": {
 					"routes": [
-						"axway-api-management.3"
+						"axway-api-management.4"
 					],
 					"context": "$.metricsGroups",
 					"metaName": "Next"
@@ -85,51 +85,6 @@
 				}
 			},
 			"metaMethod": "Get metrics groups"
-		},
-		"axway-api-management.3": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get timeline metrics",
-			"method": "getTimelineMetrics",
-			"parameters": [
-				{
-					"name": "metricsGroups",
-					"type": "jsonpath",
-					"value": "$.metricsGroups",
-					"metaName": "Metrics groups",
-					"metaDescription": "The collected Metrics-Groups for all API-Gateways"
-				},
-				{
-					"name": "metricsType",
-					"type": "string",
-					"value": "\"Service\"",
-					"metaName": "Metrics type",
-					"metaDescription": "The type of metrics to collect"
-				},
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.1"
-					],
-					"context": "$.serviceMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.1"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get timeline metrics"
 		},
 		"prometheus-metrics.1": {
 			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
@@ -219,6 +174,35 @@
 				}
 			},
 			"metaMethod": "Set HTTP Response"
+		},
+		"axway-api-management.4": {
+			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
+			"name": "Get service metrics",
+			"method": "getServiceMetrics",
+			"parameters": [
+				{
+					"name": "topology",
+					"type": "jsonpath",
+					"value": "$.gatewayTopology"
+				},
+				{
+					"name": "metricsGroups",
+					"type": "jsonpath",
+					"value": "$.metricsGroups"
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"prometheus-metrics.1"
+					],
+					"context": "$.metrics"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error"
+				}
+			}
 		}
 	}
 }

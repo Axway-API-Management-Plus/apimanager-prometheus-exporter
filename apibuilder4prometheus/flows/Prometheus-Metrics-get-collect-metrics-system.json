@@ -40,7 +40,7 @@
 			"outputs": {
 				"next": {
 					"routes": [
-						"axway-api-management.2"
+						"axway-api-management.3"
 					],
 					"context": "$.gatewayTopology",
 					"metaName": "Next"
@@ -55,48 +55,15 @@
 			},
 			"metaMethod": "Lookup topology"
 		},
-		"axway-api-management.2": {
-			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
-			"name": "Get summary metrics",
-			"method": "getSummaryMetrics",
-			"parameters": [
-				{
-					"name": "topology",
-					"type": "jsonpath",
-					"value": "$.gatewayTopology",
-					"metaName": "Topology",
-					"metaDescription": "The topology object, which is used to iterate over all API-Gateway instances."
-				}
-			],
-			"outputs": {
-				"next": {
-					"routes": [
-						"prometheus-metrics.1"
-					],
-					"context": "$.summaryMetrics",
-					"metaName": "Next"
-				},
-				"error": {
-					"routes": [
-						"http.2"
-					],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Get summary metrics"
-		},
 		"prometheus-metrics.1": {
 			"type": "nodehandler://api-builder-plugin-prometheus-metrics/prometheus-metrics",
 			"name": "Process summary metrics",
-			"method": "processSummaryMetrics",
+			"method": "processSystemMetrics",
 			"parameters": [
 				{
-					"name": "summaryMetrics",
+					"name": "systemMetrics",
 					"type": "jsonpath",
-					"value": "$.summaryMetrics",
-					"metaName": "Summary metrics",
-					"metaDescription": "Array of summary metrics"
+					"value": "$.systemMetrics"
 				}
 			],
 			"outputs": {
@@ -183,7 +150,9 @@
 				{
 					"name": "gatewayTopology",
 					"type": "jsonpath",
-					"value": "$.gatewayTopology"
+					"value": "$.gatewayTopology",
+					"metaName": "Gateway topology",
+					"metaDescription": "Gateway topology information."
 				}
 			],
 			"outputs": {
@@ -191,12 +160,68 @@
 					"routes": [
 						"http.1"
 					],
-					"context": "$.systemOverviewMetricsRegistry"
+					"context": "$.systemOverviewMetricsRegistry",
+					"metaName": "Next"
 				},
 				"error": {
 					"routes": [
 						"http.2"
 					],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Process topology information"
+		},
+		"axway-api-management.3": {
+			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
+			"name": "Get metrics groups",
+			"method": "getMetricsGroups",
+			"parameters": [
+				{
+					"name": "topology",
+					"type": "jsonpath",
+					"value": "$.gatewayTopology"
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"axway-api-management.4"
+					],
+					"context": "$.metricsGroups"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error"
+				}
+			}
+		},
+		"axway-api-management.4": {
+			"type": "nodehandler://api-builder-plugin-axway-api-management/axway-api-management",
+			"name": "Get system metrics",
+			"method": "getSystemMetrics",
+			"parameters": [
+				{
+					"name": "metricsGroups",
+					"type": "jsonpath",
+					"value": "$.metricsGroups"
+				},
+				{
+					"name": "topology",
+					"type": "jsonpath",
+					"value": "$.gatewayTopology"
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"prometheus-metrics.1"
+					],
+					"context": "$.systemMetrics"
+				},
+				"error": {
+					"routes": [],
 					"context": "$.error"
 				}
 			}
