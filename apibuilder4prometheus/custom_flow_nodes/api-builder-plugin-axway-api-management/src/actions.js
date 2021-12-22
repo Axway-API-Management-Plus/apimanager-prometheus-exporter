@@ -48,7 +48,7 @@ async function lookupTopology(params, options) {
 	cache = options.pluginContext.cache;
 	const { logger } = options;
 	if(cache.get('ANM_TOPOLOGY')) {
-		options.logger.info(`Return cached topology.`);
+		options.logger.info(`Using cached topology.`);
 		return topology;
 	}
 	try {
@@ -262,7 +262,7 @@ async function _getTopology(anmConfig, logger) {
 		topology.services = topology.services.filter(function(service) {
 			return service.type!="nodemanager"; // Filter node manager service
 		});
-		logger.info(`Successfully retrieved topology from Admin-Node-Manager. Is cached for 2 minutes.`);
+		logger.info(`Successfully retrieved topology from Admin-Node-Manager. Is cached for 60 seconds.`);
 		return topology;
 	}
 	return topology;
