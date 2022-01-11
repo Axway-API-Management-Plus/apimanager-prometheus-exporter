@@ -69,6 +69,35 @@ describe('Tests', () => {
 			expect(value).to.have.property('instance-2');
 			expect(output).to.equal('next');
 		});
+
+		it('should return the Metrics-Groups incl. failed API-Gateway', async () => {
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/apimgr/api/monitoring/metrics/groups').replyWithFile(200, './test/testReplies/anm/metrics/Groups/3_ApiMgrMetricsGroups.json');
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-1/api/monitoring/metrics/groups').replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-2/api/monitoring/metrics/groups').replyWithFile(200, './test/testReplies/anm/metrics/Groups/2_MetricsGroups.json');
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+
+			const { value, output } = await flowNode.getMetricsGroups({ topology: testTopology });
+
+			expect(value).to.have.property('instance-1');
+			expect(value).to.have.property('instance-2');
+			expect(testTopology.services[0].status).to.equal('down');
+			expect(testTopology.services[1].status).to.equal('up');
+			expect(output).to.equal('next');
+		});
+
+		it('should use the All API-Gateways failed exit', async () => {
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/apimgr/api/monitoring/metrics/groups').replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-1/api/monitoring/metrics/groups').replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-2/api/monitoring/metrics/groups').replyWithFile(503, './test/testReplies/anm/topology/GatewayInstanceNotAvailable.json');
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/testTopology.json'), null);
+
+			const { value, output } = await flowNode.getMetricsGroups({ topology: testTopology });
+
+			expect(value).to.have.property('services');
+			expect(value.services[0].status).to.equal('down');
+			expect(value.services[1].status).to.equal('down');
+			expect(output).to.equal('allGatewaysFailed');
+		});
 	});
 
 	describe('#getServiceMetrics', () => {

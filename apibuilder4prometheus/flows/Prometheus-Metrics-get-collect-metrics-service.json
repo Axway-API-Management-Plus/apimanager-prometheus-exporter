@@ -76,6 +76,13 @@
 					"context": "$.metricsGroups",
 					"metaName": "Next"
 				},
+				"allGatewaysFailed": {
+					"routes": [
+						"http.1"
+					],
+					"context": "$.topology",
+					"metaName": "All API-Gateways failed"
+				},
 				"error": {
 					"routes": [
 						"http.1"
@@ -223,29 +230,38 @@
 				{
 					"name": "errorCode",
 					"type": "number",
-					"value": "99"
+					"value": "99",
+					"metaName": "Error code",
+					"metaDescription": "An integer number used for the process to exit. Defaults to -1."
 				},
 				{
 					"name": "errorMessage",
 					"type": "jsonpath",
-					"value": "$.error"
+					"value": "$.error",
+					"metaName": "Error message",
+					"metaDescription": "An optional message which is logged when the process is terminated. Helpful to make clear the reason for the shutdown."
 				},
 				{
 					"name": "skipInDevelopment",
 					"type": "boolean",
-					"value": "true"
+					"value": "true",
+					"metaName": "Skip in development",
+					"metaDescription": "If set to true, the API-Builder process will not be stopped, when in development mode. Instead only the errorCode and errorMessage is logged."
 				}
 			],
 			"outputs": {
 				"next": {
 					"context": "$.errorMessage",
-					"routes": []
+					"routes": [],
+					"metaName": "Next"
 				},
 				"error": {
 					"context": "$.error",
-					"routes": []
+					"routes": [],
+					"metaName": "Error"
 				}
-			}
+			},
+			"metaMethod": "Shutdown"
 		}
 	}
 }

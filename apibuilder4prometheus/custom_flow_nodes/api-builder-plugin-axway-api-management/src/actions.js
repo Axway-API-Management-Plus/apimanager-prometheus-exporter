@@ -84,14 +84,17 @@ async function getMetricsGroups(params, options) {
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var groups = await _getMetrics('groups', anmConfig, service.id, logger);
 		if(!groups || groups.length==0) {
-			logger.warn(`No metrics groups found for gateway instance: ${service.id}`);
-			continue;
+			// Used by "Process topology" to indicate an instance is down in the exposed metrics and to skip further actions on this Gateway-Instance
+			service.status = "down";
+			logger.warn(`No metrics groups found for gateway instance: ${service.id}. Perhaps API-Gateway instance is offline.`);
+		} else {
+			service.status = "up";
+			allGatewaysFail = false;
 		}
-		allGatewaysFail = false;
 		metricGroups[service.id] = groups;
 	}
 	if(allGatewaysFail) {
-		throw new Error(`Error reading metric groups from all API-Gateways.`);
+		return options.setOutput('allGatewaysFailed', topology);
 	}
 	return metricGroups;
 }
@@ -156,6 +159,7 @@ async function _getTimelineMetrics(metricGroupType, metricTypes, topology, metri
 	// For each API-Gateway found in the given topology ...
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var gwInstanceId = service.id;
+		if(service.status == "down") continue;
 		// Check when metrics has been read last time from the API-Gateway instance
 		var lastReadTimestamp = cache.get(`${gwInstanceId}###${metricGroupType}`);
 		if(!lastReadTimestamp) {

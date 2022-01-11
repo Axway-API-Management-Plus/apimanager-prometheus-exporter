@@ -35,8 +35,14 @@ flow-nodes:
         outputs:
           next:
             name: Next
-            description: Metrics Groups
+            description: Returns obtained metrics Groups. Additionally the topology is updated to indicated if an API-Gateway instance is down or up.
             context: $.metricsGroups
+            schema:
+              type: object
+          allGatewaysFailed:
+            name: All API-Gateways failed
+            description: Exit if all API-Gateway instances are down. In that case, further process of other metrics makes no sense. Returns topology information.
+            context: $.topology
             schema:
               type: object
           error:

@@ -14,7 +14,7 @@ async function createRegistry(pluginConfig, logger) {
     } else {
         logger.info('Creating new Prometheus Metrics-Registry.');
         registry = new client.Registry();
-        registryMetric( client.Gauge, { name: 'axway_apigateway_version_info',               help: 'Version information about the API-Gateway', labelNames: ['gatewayId', 'version', 'image'], registers: []});
+        registryMetric( client.Gauge, { name: 'axway_apigateway_version_info',               help: 'Version information about the API-Gateway', labelNames: ['gatewayId', 'status', 'version', 'image'], registers: []});
         registryMetric( client.Gauge, { name: 'up',                                          help: 'up 1 = up, 0 = not up', labelNames: ['gatewayId'], registers: []});
 
         registryMetric( client.Gauge, { name: 'axway_apigateway_instance_disk_used_ratio',   help: 'Percentage of disk used (disk on which the API-Gateway instance is running: $VINSTDIR) (ANM metric: diskUsedPercent)', labelNames: ['gatewayId'], registers: []});

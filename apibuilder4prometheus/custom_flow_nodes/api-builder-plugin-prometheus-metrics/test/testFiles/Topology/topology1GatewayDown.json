@@ -96,7 +96,7 @@
                 "productVersion": "7.7.20210330"
             },
             "enabled": true,
-            "status": "up"
+            "status": "down"
         },
         {
             "id": "instance-2",
