@@ -5,7 +5,10 @@ This project provides a Prometheus exporter for the Axway API-Management solutio
 The Prometheus exporter is made available as a Docker image based on the Axway API builder, a Node.js application, and ideally runs in a container platform as a microservice. Alternatively, you can also run the container using Docker.
 
 This illustration provides a basic overview about the workflow:  
-![APIManager-Prometheus Exporter overview]( https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-overview.png )
+![APIManager-Prometheus Exporter overview](https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-overview.png)
+
+The following screenshot shows an example dashboard of how the data could be visualized in Grafana.
+![Grafana example Dashboard](https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-sample-grafana-dashboard.png)
 
 ## Installation
 
