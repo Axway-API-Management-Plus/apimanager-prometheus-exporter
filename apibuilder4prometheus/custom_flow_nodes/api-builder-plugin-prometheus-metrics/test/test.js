@@ -111,7 +111,7 @@ describe('flow-node prometheus-metrics', () => {
 			var apiRequestsSuccess = await value.getSingleMetric('axway_api_requests_success').get();
 			var apiRequestsFailure = await value.getSingleMetric('axway_api_requests_failures').get();
 			var apiRequestsExceptions = await value.getSingleMetric('axway_api_requests_exceptions').get();
-			var apiRequestsDuration = await value.getSingleMetric('axway_api_requests_duration_milliseconds').get();
+			var apiRequestsDuration = await value.getSingleMetric('axway_api_requests_duration_seconds').get();
 			
 			
 			expect(apiRequestsTotal.type).to.equal('counter');
