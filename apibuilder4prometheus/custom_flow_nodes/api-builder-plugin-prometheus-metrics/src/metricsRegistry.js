@@ -29,7 +29,7 @@ async function createRegistry(pluginConfig, logger) {
         registryMetric( client.Counter, { name: 'axway_api_requests_failures',       help: 'The total number of failure API-Requests', labelNames: ['gatewayId', 'service'], registers: []});
         registryMetric( client.Counter, { name: 'axway_api_requests_exceptions',     help: 'The total number of exception API-Requests', labelNames: ['gatewayId', 'service'], registers: []});
 
-        registryMetric( client.Histogram, { name: 'axway_api_requests_duration_milliseconds', help: 'The API-Request duration. (ANM metric: processingTimeAvg)', buckets: [10, 20, 50, 100, 250, 500, 1000], labelNames: ['gatewayId', 'service'], registers: []});
+        registryMetric( client.Histogram, { name: 'axway_api_requests_duration_milliseconds', help: 'The API-Request duration. (ANM metric: processingTimeAvg)', buckets: [0.01, 0.02, 0.05, 0.1, 0.25, 0.5, 1], labelNames: ['gatewayId', 'service'], registers: []});
 
         logger.info('Prometheus Metrics-Registry successfully created.');
     }

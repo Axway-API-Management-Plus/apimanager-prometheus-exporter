@@ -95,6 +95,8 @@ async function processServiceMetrics(params, options) {
 		for(processingTime of metric.processingTimeAvg) {
 			// Ignore processingTime 0, as it means, no API-Request has been processed and with that is doesn't affect the average
 			if(processingTime ==  0) continue;
+			// Convert given milliseconds into prometheus base unit seconds
+			processingTime = processingTime/1000;
 			logger.info(`Adding ProcessingTimeAvg ${processingTime} for service: ${metric.name} on gatewayId: ${metric.gatewayId}`);
 			metrics.axway_api_requests_duration_milliseconds.observe({ gatewayId: metric.gatewayId, service: metric.name }, processingTime);
 			avgProcessed = true;
