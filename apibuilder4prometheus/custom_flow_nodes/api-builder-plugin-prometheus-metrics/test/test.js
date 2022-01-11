@@ -197,8 +197,8 @@ describe('flow-node prometheus-metrics', () => {
 
 			expect(versionInfo.type).to.equal('gauge');
 			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected
-			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", status: "up", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
-			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-2", version: "7.7.20210330", status: "up", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-2", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 			expect(output).to.equal('next');
 
 			var changedTopology = JSON.parse(fs.readFileSync('./test/testFiles/Topology/changedTopology.json'), null);
@@ -206,8 +206,8 @@ describe('flow-node prometheus-metrics', () => {
 			var result = await flowNode.processTopologyInfo({ gatewayTopology: changedTopology });
 
 			var versionInfo = await result.value.getSingleMetric('axway_apigateway_version_info').get();
-			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", status: "up", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
-			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-3", version: "7.7.20210330", status: "up", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-3", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 		});
 
 		it('should update the service registry based on the given topology that contains an offline gateway instance', async () => {
@@ -221,8 +221,8 @@ describe('flow-node prometheus-metrics', () => {
 
 			expect(versionInfo.type).to.equal('gauge');
 			expect(versionInfo.values).to.lengthOf(2); // 2 Metrics from two Gateway-Instances are expected, but one is down
-			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", status: "down", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
-			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-2", version: "7.7.20210330", status: "up", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
+			expect(versionInfo.values[0]).to.deep.equal( { labels: { gatewayId: "instance-1", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 0 });
+			expect(versionInfo.values[1]).to.deep.equal( { labels: { gatewayId: "instance-2", version: "7.7.20210330", image: "docker.pkg.github.com/cwiechmann/axway-api-management-automated/manager:77-20210330-v1-696cc6d"}, value: 1 });
 			expect(output).to.equal('next');
 		});
 	});

@@ -68,7 +68,7 @@ async function processTopologyInfo(params, options) {
 	metrics.axway_apigateway_version_info.reset();
 
 	for(service of gatewayTopology.services) {
-		metrics.axway_apigateway_version_info		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, service.status);
+		metrics.axway_apigateway_version_info		.set({ gatewayId: service.id, version: service.tags.productVersion, image: service.tags.image }, service.status == "down" ? 0 : 1);
 	}
 	return registry;
 }
