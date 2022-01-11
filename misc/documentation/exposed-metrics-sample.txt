@@ -1,8 +1,8 @@
 # HELP axway_apigateway_version_info Version information about the API-Gateway
 # TYPE axway_apigateway_version_info gauge
-axway_apigateway_version_info{gatewayId="apimgr-6454c7fcdf-lw65f",version="7.7.20211130",image="ghcr.io/cwiechmann/axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
-axway_apigateway_version_info{gatewayId="traffic-79cf9b4f6f-gxn57",version="7.7.20211130",image="ghcr.io/cwiechmann/axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
-axway_apigateway_version_info{gatewayId="traffic-79cf9b4f6f-r8q2t",version="7.7.20211130",image="ghcr.io/cwiechmann/axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
+axway_apigateway_version_info{gatewayId="apimgr-6454c7fcdf-lw65f",version="7.7.20211130",image="axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
+axway_apigateway_version_info{gatewayId="traffic-79cf9b4f6f-gxn57",version="7.7.20211130",image="axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
+axway_apigateway_version_info{gatewayId="traffic-79cf9b4f6f-r8q2t",version="7.7.20211130",image="axway-api-management-automated/manager:77-20211130-v1-ae1a6bc"} 1
 
 # HELP up up 1 = up, 0 = not up
 # TYPE up gauge
