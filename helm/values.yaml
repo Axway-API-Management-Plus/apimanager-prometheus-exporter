@@ -28,7 +28,7 @@ config:
   # Controls how often the API gateway system metrics, such as CPU or memory usage, should be obtained from the ANM. 
   # The smaller the interval, the more granular the exposed information is provided, but has higher load for the admin node manager.
   # The default is every 15 seconds. It makes sense to match this value with the Prometheus scraper interval.
-  pollSummaryMetricsInterval: ""
+  pollSystemMetricsInterval: ""
   # The Log-Level of the API-Builder process. Defaults to info.
   logLevel: ""
 

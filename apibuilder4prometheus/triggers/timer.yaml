@@ -14,7 +14,7 @@ triggers:
   timer-2:
     name: Timer
     parameters:
-      interval: $.config.promExporter.pollSummaryMetricsInterval
+      interval: $.config.promExporter.pollSystemMetricsInterval
     enabled: true
     invoke:
       flow: Prometheus-Metrics-get-collect-metrics-system

@@ -55,8 +55,8 @@ spec:
             value: {{ default "info" .Values.config.logLevel | quote }}
           - name: POLL_SERVICE_METRICS_INTERVAL
             value: {{ default "15000" .Values.config.pollServiceMetricsInterval | quote }}
-          - name: POLL_SUMMARY_METRICS_INTERVAL
-            value: {{ default "15000" .Values.config.pollSummaryMetricsInterval | quote }}
+          - name: POLL_SYSTEM_METRICS_INTERVAL
+            value: {{ default "15000" .Values.config.pollSystemMetricsInterval | quote }}
             
           livenessProbe:
             httpGet:
