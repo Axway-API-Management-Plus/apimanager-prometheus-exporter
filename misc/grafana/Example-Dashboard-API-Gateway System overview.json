@@ -23,44 +23,18 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1641893569222,
+  "iteration": 1641974662676,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": null,
+      "description": "Successful API-Request",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "fixedColor": "dark-green",
+            "mode": "fixed"
           },
           "mappings": [],
           "thresholds": {
@@ -69,10 +43,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -81,56 +51,221 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 3,
         "x": 0,
         "y": 0
       },
-      "id": 8,
+      "id": 10,
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "multi"
-        }
+        "text": {
+          "valueSize": 28
+        },
+        "textMode": "auto"
       },
+      "pluginVersion": "8.2.5",
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(rate(axway_api_requests_total{gatewayId=~\"$gatewayId\", service=~\"$service\" }[5m]))",
-          "interval": "",
-          "legendFormat": "Total",
-          "refId": "A"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(rate(axway_api_requests_success{}[5m]))",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "Success",
-          "refId": "B"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(rate(axway_api_requests_failures{}[5m]))",
-          "hide": true,
-          "interval": "",
-          "legendFormat": "Failures",
-          "refId": "C"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(rate(axway_api_requests_exceptions{}[5m]))",
+          "expr": "sum(increase(axway_api_requests_success[$__range]))",
           "hide": false,
           "interval": "",
-          "legendFormat": "Exceptions",
-          "refId": "D"
+          "legendFormat": "Successes last 10 Minutes",
+          "refId": "A"
         }
       ],
-      "title": "API-Requests",
-      "type": "timeseries"
+      "title": "Successes",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "Successful API-Request",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-orange",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 3,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "valueSize": 28
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(increase(axway_api_requests_failures[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Failures last 10 Minutes",
+          "refId": "B"
+        }
+      ],
+      "title": "Blocked",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "API-Request causing an exception",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "noValue": "No exceptions",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {
+          "valueSize": 28
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(increase(axway_api_requests_exceptions[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Exceptions last 10 Minutes",
+          "refId": "C"
+        }
+      ],
+      "title": "Exceptions",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "description": "The number of transactions per second in the last 5 minutes for the selected API-Gateway(s).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "noValue": "0 req/s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 9,
+        "y": 0
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(rate(axway_api_requests_total{gatewayId=~\"$gatewayId\", service=~\"$service\"}[5m]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Transactions / Sec (last 5 minutes)",
+      "type": "stat"
     },
     {
       "datasource": null,
@@ -279,6 +414,178 @@
                 "value": 80
               }
             ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(rate(axway_api_requests_total{gatewayId=~\"$gatewayId\", service=~\"$service\"}[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Total",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(rate(axway_api_requests_success{gatewayId=~\"$gatewayId\", service=~\"$service\"}[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Successes",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(rate(axway_api_requests_failures{gatewayId=~\"$gatewayId\", service=~\"$service\"}[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Failures",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(rate(axway_api_requests_exceptions{gatewayId=~\"$gatewayId\", service=~\"$service\"}[$__range]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "Exceptions",
+          "refId": "D"
+        }
+      ],
+      "title": "API-Requests",
+      "type": "timeseries"
+    },
+    {
+      "cards": {
+        "cardPadding": null,
+        "cardRound": null
+      },
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateOranges",
+        "exponent": 0.5,
+        "max": null,
+        "min": null,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": null,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "heatmap": {},
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 12,
+      "legend": {
+        "show": true
+      },
+      "pluginVersion": "8.2.5",
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(increase(axway_api_requests_duration_seconds_bucket{gatewayId=~\"$gatewayId\", service=~\"$service\"}[5m])) by (le)",
+          "format": "heatmap",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "title": "API Request duration",
+      "tooltip": {
+        "show": true,
+        "showHistogram": true
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 0,
+        "format": "s",
+        "logBase": 1,
+        "max": null,
+        "min": null,
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto",
+      "yBucketNumber": null,
+      "yBucketSize": null
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
           "unit": "percent"
         },
@@ -288,7 +595,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 16
       },
       "id": 4,
       "options": {
@@ -324,13 +631,15 @@
     },
     {
       "datasource": null,
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
+            "mode": "thresholds"
           },
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -339,87 +648,12 @@
                 "value": null
               },
               {
-                "color": "red",
+                "color": "yellow",
                 "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 8
-      },
-      "id": 10,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {
-          "valueSize": 28
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.2.5",
-      "targets": [
-        {
-          "exemplar": true,
-          "expr": "sum(increase(axway_api_requests_success[10m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Successes last 10 Minutes",
-          "refId": "A"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(increase(axway_api_requests_failures[10m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Failures last 10 Minutes",
-          "refId": "B"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(increase(axway_api_requests_exceptions[10m]))",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Failures last 10 Minutes",
-          "refId": "C"
-        }
-      ],
-      "title": "API request last 10 minutes",
-      "type": "stat"
-    },
-    {
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "percentage",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
               },
               {
                 "color": "red",
-                "value": 80
+                "value": 90
               }
             ]
           },
@@ -428,9 +662,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 16
       },
       "id": 2,
@@ -446,7 +680,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
         "text": {
-          "titleSize": 10,
+          "titleSize": 20,
           "valueSize": 24
         }
       },
@@ -465,70 +699,90 @@
       "type": "gauge"
     },
     {
-      "cards": {
-        "cardPadding": null,
-        "cardRound": null
-      },
-      "color": {
-        "cardColor": "#b4ff00",
-        "colorScale": "sqrt",
-        "colorScheme": "interpolateOranges",
-        "exponent": 0.5,
-        "max": null,
-        "min": null,
-        "mode": "spectrum"
-      },
-      "dataFormat": "tsbuckets",
       "datasource": null,
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 16
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "orange",
+                  "index": 2,
+                  "text": "Unknown"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
-      "heatmap": {},
-      "hideZeroBuckets": false,
-      "highlightCards": true,
-      "id": 12,
-      "legend": {
-        "show": true
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 14,
+      "options": {
+        "alignValue": "center",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "always",
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.2.5",
-      "reverseYBuckets": false,
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(increase(axway_api_requests_duration_milliseconds_bucket{gatewayId=~\"$gatewayId\", service=~\"$service\"}[5m])) by (le)",
-          "format": "heatmap",
+          "expr": "axway_apigateway_version_info{}",
+          "format": "time_series",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{le}}",
+          "legendFormat": "{{gatewayId}}",
           "refId": "A"
         }
       ],
-      "title": "API Request duration",
-      "tooltip": {
-        "show": true,
-        "showHistogram": true
-      },
-      "type": "heatmap",
-      "xAxis": {
-        "show": true
-      },
-      "xBucketNumber": null,
-      "xBucketSize": null,
-      "yAxis": {
-        "decimals": 0,
-        "format": "s",
-        "logBase": 1,
-        "max": null,
-        "min": null,
-        "show": true,
-        "splitFactor": null
-      },
-      "yBucketBound": "auto",
-      "yBucketNumber": null,
-      "yBucketSize": null
+      "title": "API-Gateway Instance status",
+      "type": "state-timeline"
     }
   ],
   "refresh": "",
@@ -540,12 +794,12 @@
       {
         "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "Petstore"
+            "All"
           ],
           "value": [
-            "Petstore"
+            "$__all"
           ]
         },
         "datasource": null,
@@ -573,10 +827,10 @@
         "current": {
           "selected": true,
           "text": [
-            "traffic-79cf9b4f6f-gxn57"
+            "All"
           ],
           "value": [
-            "traffic-79cf9b4f6f-gxn57"
+            "$__all"
           ]
         },
         "datasource": null,
@@ -602,12 +856,12 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "API-Gateway System overview",
   "uid": "yxhEu55nk",
-  "version": 16
+  "version": 21
 }
