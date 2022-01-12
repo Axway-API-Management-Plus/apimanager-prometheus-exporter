@@ -7,7 +7,7 @@ The Prometheus exporter is made available as a Docker image based on the Axway A
 This illustration provides a basic overview about the workflow:  
 ![APIManager-Prometheus Exporter overview](https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-overview.png)
 
-The following screenshot shows an example dashboard of how the data could be visualized in Grafana.
+The following screenshot shows an example dashboard of how the data could be visualized in Grafana. You may install this Dashboard into your Grafana using the [JSON-Export](./misc/grafana/Example-Dashboard-API-Gateway System overview.json).
 ![Grafana example Dashboard](https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/blob/master/misc/images/apimanager-prometheus-exporter-sample-grafana-dashboard.png)
 
 ## Installation
