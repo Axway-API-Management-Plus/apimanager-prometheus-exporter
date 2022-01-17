@@ -1,4 +1,4 @@
-name: Prometheus Exporter
+name: Build Prometheus Exporter
 
 on: 
   push: 

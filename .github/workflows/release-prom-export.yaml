@@ -1,4 +1,4 @@
-name: Release Axway Prometheus-Exporter
+name: Release Prometheus-Exporter
 
 on:
   release:
