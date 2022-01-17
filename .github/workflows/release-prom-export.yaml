@@ -14,6 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: 'master'
     - name: Publish Docker image
       uses: elgohr/Publish-Docker-Github-Action@2.13
       with:
@@ -28,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: 'master'
     - name: Create packaged Helm-Chart
       run: helm package ./helm --dependency-update --app-version ${{ github.event.release.tag_name }} --version ${{ github.event.release.tag_name }}
     - name: upload-helm-chart
