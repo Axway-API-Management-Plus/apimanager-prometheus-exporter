@@ -3,5 +3,5 @@
 1. Set the version 
   - in helm/Chart.yaml
   - Update the README.me - Section: `helm install ` two times
-2. On GitHub create a release with a tag (e.g. 0.4.0)
-  - 
+2. Update the Changelog
+3. On GitHub create a release with a tag using Semver schema (e.g. 1.1.0)

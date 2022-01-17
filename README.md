@@ -21,7 +21,7 @@ You can find an example here: [example.local.values.yaml](https://raw.githubuser
 To install the Helm-Chart:  
 ```
 wget -O local.values.yaml https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/helm/examples/example.local.values.yaml
-helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/releases/download/0.5.0/helm-chart-axway-apim-prometheus-0.5.0.tgz
+helm install -n <your-namespace> <name> -f <path-to-you-local-values> https://github.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/releases/download/1.0.0/helm-chart-axway-apim-prometheus-1.0.0.tgz
 ```
 
 ### Docker
@@ -58,6 +58,11 @@ The Prometheus Exporter is configured using environment variables, which are exp
 | LOG_LEVEL                     | debug                   | Debug level of the Prometheus-Exporter application. Defaults to info. Don't set debug in production. | 
 | POLL_SERVICE_METRICS_INTERVAL | 30000                   | How often should Service-Metrics (i.e. APIs-Requests, Duration) be fetched from the ANM. The shorter the interval, the more granular the metrics, but possibly more load on the ANM. Defaults to 15000 (15 seconds) | 
 | POLL_SYSTEM_METRICS_INTERVAL  | 30000                   | How often should System-Metrics (i.e. CPU-, Disk-Usage, ...) be fetched from the ANM. The shorter the interval, the more granular the metrics, but possibly more load on the ANM. Defaults to 15000 (15 seconds) | 
+
+## Grafana
+
+As a kickstarter, feel free to use the Grafana dashboard:  
+[Example-Dashboard-API-Gateway System overview.json](https://raw.githubusercontent.com/Axway-API-Management-Plus/apimanager-prometheus-exporter/master/misc/grafana/Example-Dashboard-API-Gateway%20System%20overview.json)
 
 
 ## Contributing
