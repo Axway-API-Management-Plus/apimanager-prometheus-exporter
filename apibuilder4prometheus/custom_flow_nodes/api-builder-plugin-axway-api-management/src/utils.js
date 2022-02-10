@@ -47,7 +47,7 @@ async function sendRequest(url, options, data, expectedRC) {
 async function loginToAdminNodeManager(anmConfig, options) {
 	try {
 		options.logger.debug(`Login to Admin-Node-Manager on URL: '${anmConfig.url}'`)
-		var data = `username=${anmConfig.username}&password=${anmConfig.password}`;
+		var data = `username=${encodeURIComponent(anmConfig.username)}&password=${encodeURIComponent(anmConfig.password)}`;
 		var reqOptions = {
 			path: `/api/rbac/login`,
 			method: 'POST',
