@@ -58,6 +58,15 @@ describe('Tests', () => {
 				.and.to.have.property('message', 'Missing required parameter: topology');
 		});
 
+		it('should error when topology services are empty', async function () {
+			var testTopology = JSON.parse(fs.readFileSync('./test/testFiles/topologyNoServices.json'), null);
+			const { value, output } = await flowNode.getMetricsGroups({ topology: testTopology });
+
+			expect(output).to.equal('error');
+			expect(value).to.be.instanceOf(Object)
+				.and.to.have.property('message', 'No topology services found. Please check the topology using Admin-Node-Manager.');
+		});
+
 		it('should return the Metrics-Groups', async () => {
 			nock('https://mocked-api-gateway:8190').get('/api/router/service/apimgr/api/monitoring/metrics/groups').replyWithFile(200, './test/testReplies/anm/metrics/Groups/3_ApiMgrMetricsGroups.json');
 			nock('https://mocked-api-gateway:8190').get('/api/router/service/instance-1/api/monitoring/metrics/groups').replyWithFile(200, './test/testReplies/anm/metrics/Groups/1_MetricsGroups.json');

@@ -80,6 +80,9 @@ async function getMetricsGroups(params, options) {
 	}
 	var metricGroups = {};
 	var allGatewaysFail = true;
+	if(topology.services.length == 0) {
+		throw new Error('No topology services found. Please check the topology using Admin-Node-Manager.');
+	}
 	// Get the metric groups for each API-Gateway instance
 	for (const [key, service] of Object.entries(topology.services)) { 
 		var groups = await _getMetrics('groups', anmConfig, service.id, logger);

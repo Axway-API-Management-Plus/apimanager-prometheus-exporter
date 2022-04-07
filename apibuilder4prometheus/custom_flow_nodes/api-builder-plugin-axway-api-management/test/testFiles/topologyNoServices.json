@@ -1,0 +1,45 @@
+{
+    "id": "DefaultDomain",
+    "version": 1,
+    "timestamp": 1649252972402,
+    "productVersion": "7.7.0",
+    "hosts": [
+      {
+        "id": "host-1",
+        "name": "axway-apim-anm-7bbf7c8f98-n5kt4"
+      }
+    ],
+    "groups": [
+      {
+        "id": "emt_anm_group",
+        "name": "Node Manager Group",
+        "tags": {
+          
+        },
+        "services": [
+          {
+            "id": "nodemanager-1",
+            "name": "Admin Node Manager",
+            "type": "nodemanager",
+            "scheme": "https",
+            "hostID": "host-1",
+            "managementPort": 8090,
+            "tags": {
+              "internal_admin_nm": "true"
+            },
+            "enabled": true
+          }
+        ],
+        "lock": null
+      }
+    ],
+    "uniqueIdCounters": {
+      "NodeManager": 2,
+      "Host": 2,
+      "Group": 2
+    },
+    "emtEnabled": true,
+    "services": [
+      
+    ]
+  }
