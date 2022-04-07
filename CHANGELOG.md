@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Security
 - Updated dependencies to solve security issues
 
+### Fixed
+- The Helm template ingress definition to avoid error unknown field "servicePort" in io.k8s.api.networking.v1.IngressBackend
+
 ## [1.0.1] 2022-01-17
 
 ### Security
