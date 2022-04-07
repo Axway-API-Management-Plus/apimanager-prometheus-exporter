@@ -64,7 +64,7 @@ describe('Tests', () => {
 
 			expect(output).to.equal('error');
 			expect(value).to.be.instanceOf(Object)
-				.and.to.have.property('message', 'No topology services found. Please check the topology using Admin-Node-Manager.');
+				.and.to.have.property('message', 'No topology services found. Please check the topology using your Admin-Node-Manager.');
 		});
 
 		it('should return the Metrics-Groups', async () => {
