@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Error handling improved when Admin-Node-Manager topology has no running services (API-Gateway instances)
 
+### Security
+- Updated dependencies to solve security issues
+
 ## [1.0.1] 2022-01-17
 
 ### Security
