@@ -72,7 +72,7 @@ ingress:
   hosts:
     - host: chart-example.local
       paths:
-      - path: /*
+      - path: /
         backend:
           serviceName: chart-example.local
           servicePort: 80
